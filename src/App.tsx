@@ -10,8 +10,8 @@ import {BrowserRouter as Router,
 import type { User } from "./myType.tsx";
 export function App() {
   const [loginData,setLoginData] = useState<User>({
-    username: " ",
-    password: " "
+    username: "",
+    password: ""
   });
   const [message,setMessage] = useState<string>("");
   const handleUsername = (event:React.ChangeEvent<HTMLInputElement>): void =>{
@@ -28,16 +28,26 @@ export function App() {
       ...prevLoginData,
       password:val}));
   };
-  const myAccount:User={
-    username:"vulturechoujin",
-    password:"password"
+  const handleCreate = async()=>{
+    try{
+      const response = await CreateUser(loginData);
+      var responseTxt = await response.text();
+      setMessage(responseTxt);
+    }
+    catch(error){
+      console.error(error);
+    }
   };
+  // const myAccount:User={
+  //   username:"vulturechoujin",
+  //   password:"password"
+  // };
   
   return (
     <div>
       <InputBox handleUsername = {handleUsername} handlePassword = {handlePassword}/>
-      <button onClick = {(e:any)=>CreateUser(myAccount)}>Create Account</button>
-      {/* <div className = "message">{message}</div> */}
+      <button onClick =  {handleCreate}>Create Account</button>
+      <div className = "message">{message}</div>
     </div>
 
   );
