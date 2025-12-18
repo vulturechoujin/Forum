@@ -1,6 +1,6 @@
 import React,{useState} from 'react';
 import type { User } from './myType';
-export  function CreateUser(user:User){
+export function CreateUser(user:User){
     const headers:Headers = new Headers();
     headers.set('Content-Type','application/json');
     headers.set('Accept','application/json');
@@ -9,10 +9,6 @@ export  function CreateUser(user:User){
         headers:headers,
         body: JSON.stringify(user)
     });
-    fetch(request).then(res =>res.text())
-    .then(data=>{
-        console.log(data);
-    });
-    // return response;
+    return fetch(request);
 }
 export default CreateUser;

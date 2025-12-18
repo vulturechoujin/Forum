@@ -25,8 +25,7 @@ func DBconnect() {
 }
 func FindUser(myUser myTypes.User) int {
 	sql := `SELECT COUNT(user_id) AS cnt FROM users
-	WHERE username = $1
-	RETURNING cnt`
+	WHERE username = $1`
 	var cnt int
 	err := global_conn.QueryRow(context.Background(), sql, myUser.Username).Scan(&cnt)
 	if err != nil {

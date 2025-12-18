@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	dbconnect "forum/backend/dbconnect"
 	myTypes "forum/backend/myTypes"
 	"net/http"
@@ -26,10 +27,11 @@ func CORSMiddleware() gin.HandlerFunc {
 func responseStr(myUser myTypes.User) string {
 	ans := ""
 	cntUser := dbconnect.FindUser(myUser)
-	if cntUser > 1 {
+	fmt.Println(cntUser)
+	if cntUser >= 1 {
 		ans = "Already existed"
 	} else if cntUser == 0 {
-		ans = "Created account"
+		ans = "Successfully creating"
 	} else {
 		ans = "Error, try again"
 	}
@@ -37,12 +39,19 @@ func responseStr(myUser myTypes.User) string {
 }
 
 func addUsers(ct *gin.Context) {
+	// fmt.Println(ct.Request.Method)
 	var newUser myTypes.User
 	response := ""
 	if err := ct.BindJSON(&newUser); err != nil {
-		response = "Error, try again"
+		response = "Error , try again"
+		return
+	} else {
+		fmt.Println(newUser)
+		response = responseStr(newUser)
+		if response == "Successfully creating" {
+			dbconnect.UpdateDatabase(newUser)
+		}
 	}
-	response = responseStr(newUser)
 	ct.JSON(http.StatusOK, response)
 }
 
