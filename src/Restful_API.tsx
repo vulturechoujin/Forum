@@ -17,7 +17,7 @@ export function RenderPost(){
     headers.set('Accept','application/json');
     headers.set('X-Custom-Header', 'CustomValue');
 
-    const request: RequestInfo = new Request("http://localhost:8000/users",{
+    const request: RequestInfo = new Request("http://localhost:8000/discussion",{
         method:'GET',
         headers:headers
     });
