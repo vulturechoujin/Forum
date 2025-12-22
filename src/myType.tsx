@@ -6,3 +6,10 @@ export interface User{
 export interface AccountButton_Prop{
     loginData:User
 }
+export interface Blog_Prop{
+    post:Post
+}
+export interface Post{
+    post_id:number,
+    post_content:string
+}

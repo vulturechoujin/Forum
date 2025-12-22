@@ -1,10 +1,9 @@
 package main
 
 import (
-	"fmt"
+	account "forum/backend/account"
 	dbconnect "forum/backend/dbconnect"
-	myTypes "forum/backend/myTypes"
-	"net/http"
+	"forum/backend/discussion"
 
 	"github.com/gin-gonic/gin"
 )
@@ -24,42 +23,13 @@ func CORSMiddleware() gin.HandlerFunc {
 	}
 }
 
-func responseStr(myUser myTypes.User) string {
-	ans := ""
-	cntUser := dbconnect.FindUser(myUser)
-	fmt.Println(cntUser)
-	if cntUser >= 1 {
-		ans = "Already existed"
-	} else if cntUser == 0 {
-		ans = "Successfully creating"
-	} else {
-		ans = "Error, try again"
-	}
-	return ans
-}
-
-func addUsers(ct *gin.Context) {
-	// fmt.Println(ct.Request.Method)
-	var newUser myTypes.User
-	response := ""
-	if err := ct.BindJSON(&newUser); err != nil {
-		response = "Error , try again"
-		return
-	} else {
-		fmt.Println(newUser)
-		response = responseStr(newUser)
-		if response == "Successfully creating" {
-			dbconnect.UpdateDatabase(newUser)
-		}
-	}
-	ct.JSON(http.StatusOK, response)
-}
-
 func main() {
 	dbconnect.DBconnect()
 	router := gin.Default()
 	router.Use(CORSMiddleware())
 	router.SetTrustedProxies([]string{"127.0.0.1:8000"})
-	router.POST("/users", addUsers)
+	router.POST("/users", account.AddUsers)
+	router.POST("/createpost", discussion.AddPosts)
+	router.GET("/discussion", discussion.ReturnPosts)
 	router.Run("localhost:8000")
 }

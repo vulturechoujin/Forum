@@ -33,12 +33,47 @@ func FindUser(myUser myTypes.User) int {
 	}
 	return cnt
 }
-func UpdateDatabase(newuser myTypes.User) error {
+func NewUser(newuser myTypes.User) error {
 	sql := `INSERT INTO users (username,pass) 
 	Values ($1,$2)
 	RETURNING user_id`
 	var id int
 	err := global_conn.QueryRow(context.Background(), sql, newuser.Username, newuser.Password).Scan(&id)
+	if err != nil {
+		return fmt.Errorf("error creating task: %w", err)
+	}
+	// fmt.Printf("Success")
+	fmt.Printf("Created task with ID %d\n", id)
+	return nil
+}
+func ReturnPosts() ([]myTypes.Post, error) {
+	sql := `SELECT post_id,post_content FROM posts`
+	var blogs []myTypes.Post
+	rows, err := global_conn.Query(context.Background(), sql)
+	if err != nil {
+		return nil, fmt.Errorf("error creating task: %w", err)
+	}
+	defer rows.Close()
+	for rows.Next() {
+		blog := myTypes.Post{}
+		err := rows.Scan(&blog.Post_Id, &blog.Post_Content)
+		if err != nil {
+			return nil, fmt.Errorf("error scanning row: %w", err)
+		}
+		blogs = append(blogs, blog)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("error iterating task row :%w", err)
+	}
+	return blogs, nil
+}
+
+func NewPost(newContent string) error {
+	sql := `INSERT INTO posts (post_content,user_id) 
+	Values ($1,2)
+	RETURNING post_id`
+	var id int
+	err := global_conn.QueryRow(context.Background(), sql, newContent).Scan(&id)
 	if err != nil {
 		return fmt.Errorf("error creating task: %w", err)
 	}
