@@ -4,6 +4,7 @@ import (
 	account "forum/backend/account"
 	dbconnect "forum/backend/dbconnect"
 	"forum/backend/discussion"
+	"forum/backend/session"
 
 	"github.com/gin-gonic/gin"
 )
@@ -22,14 +23,16 @@ func CORSMiddleware() gin.HandlerFunc {
 		}
 	}
 }
-
 func main() {
 	dbconnect.DBconnect()
 	router := gin.Default()
 	router.Use(CORSMiddleware())
 	router.SetTrustedProxies([]string{"127.0.0.1:8000"})
-	router.POST("/users", account.AddUsers)
+	// router.POST("/users", account.AddUsers)
 	router.POST("/createpost", discussion.AddPosts)
+	router.POST("/login", account.VerifyUsers)
+	router.POST("/cookies", session.AuthenticateMiddleware)
 	router.GET("/discussion", discussion.ReturnPosts)
+	//authenticate user
 	router.Run("localhost:8000")
 }

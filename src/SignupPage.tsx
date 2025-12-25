@@ -1,10 +1,10 @@
+import "./index.css";
 import React,{useState,useEffect} from 'react';
 import InputBox from "./Authentication/inputBox.tsx";
-import { AddUser, VerifyUser } from "./Restful_API.tsx";
+import { AddUser } from "./Restful_API.tsx";
 import type { User } from "./myType.tsx";
 import { useNavigate } from "react-router-dom";
-
-export function LoginPage() {
+export function SignupPage() {
   const [loginData,setLoginData] = useState<User>({
     username: "",
     password: ""
@@ -26,38 +26,34 @@ export function LoginPage() {
       ...prevLoginData,
       password:val}));
   };
-  const AccountExist = async()=>{
+  const CreateAccount = async()=>{
     try{
-      const response = await VerifyUser(loginData);
-      if(response.ok){
-        navigate("/discussion");  
-      }
-      if(response.status===401){
-        navigate("/login");
-      }
+      const response = await AddUser(loginData);
+      var responseTxt = await response.json();
+      setMessage(responseTxt);
     }
-    catch(err){
-      console.log(err);
+    catch(error){
+      console.error(error);
     }
-};
+  };
   //Navigate to discussion if succesffuly creating
-  // useEffect(()=>{
-  //   // console.log("something");
-  //   console.log(message);
-  //   if(message === "Successfully creating"){
-  //     console.log("something");
-  //     navigate('../discussion');
-  //   }
-  // },[message]);
+  useEffect(()=>{
+    // console.log("something");
+    console.log(message);
+    if(message === "Successfully creating"){
+      console.log("something");
+      navigate('../discussion');
+    }
+  },[message]);
   
   //React Component
   return (
     <div>
       <InputBox handleUsername = {handleUsername} handlePassword = {handlePassword}/>
-      <button onClick = {AccountExist}>Create Account</button>
+      <button onClick =  {CreateAccount}>Create Account</button>
       <div className = "message">{message}</div>
     </div>
   );
-};
+}
 
-export default LoginPage;
+export default SignupPage;

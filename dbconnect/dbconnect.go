@@ -23,7 +23,7 @@ func DBconnect() {
 	// defer conn.Close(context.Background())
 	fmt.Println("Connected")
 }
-func FindUser(myUser myTypes.User) int {
+func CountUser(myUser myTypes.User) int {
 	sql := `SELECT COUNT(user_id) AS cnt FROM users
 	WHERE username = $1`
 	var cnt int
@@ -32,6 +32,17 @@ func FindUser(myUser myTypes.User) int {
 		return -1 /// error has occured
 	}
 	return cnt
+}
+func FindUser(myUser myTypes.User) (int, string, string) {
+	sql := `SELECT user_id,username,pass FROM users
+	WHERE username = $1`
+	var username, password string
+	var id int
+	err := global_conn.QueryRow(context.Background(), sql, myUser.Username).Scan(&id, &username, &password)
+	if err != nil {
+		return -1, "", "" /// error has occured
+	}
+	return id, username, password
 }
 func NewUser(newuser myTypes.User) error {
 	sql := `INSERT INTO users (username,pass) 

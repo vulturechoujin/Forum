@@ -1,5 +1,5 @@
 import React,{useState,useEffect} from "react"
-import { AddPost } from "./Restful_API";
+import { AddPost, CheckToken } from "./Restful_API";
 import { useNavigate } from "react-router-dom";
 
 export function CreatePage() {
@@ -25,6 +25,20 @@ export function CreatePage() {
       },100)
     }
   },[message]);
+  useEffect(()=>{
+    const fetchData=async()=>{
+      try{
+        const response = await CheckToken();
+        if(!response.ok){
+          navigate('../login')
+        }
+      }
+      catch(error){
+        console.log(error);
+      }
+    }
+    fetchData();
+  },[]);
   return (
     <section>
       <h2>Create a Blog Post</h2>
