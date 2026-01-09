@@ -1,44 +1,43 @@
 import React,{useState,useEffect} from "react"
 import { AddPost, CheckToken } from "./Restful_API";
 import { useNavigate } from "react-router-dom";
-
+import { useStatus, type Post } from "./myType";
 export function CreatePage() {
   const [message,setMessage] = useState<string>(""); 
   const navigate = useNavigate();
+  const [username,isLogin] = useStatus();
+  useEffect(
+    ()=>{
+      if(!isLogin){
+        navigate('/login');
+      }
+    }
+    ,[])
   const CreatePost = async()=>{
       const data = (document.getElementById('create-post') as HTMLInputElement).value;
       console.log(data);
       try{
-      const response = await AddPost(data);
+      let newPost:Post = {
+        Post_Id:0,
+        Post_Content:data,
+        Post_Username:username
+      }
+      const response = await AddPost(newPost);
       var responseTxt = await response.json();
       setMessage(responseTxt);
       console.log(responseTxt);
       }
-      catch(error){
-        console.log(error);
+      catch(err){
+        console.log(err);
       }
   }
-  useEffect(()=>{
+  useEffect(()=>  {
     if(message === "Succesfully posting") {
       setTimeout(()=>{
         navigate('/discussion');
       },100)
     }
   },[message]);
-  useEffect(()=>{
-    const fetchData=async()=>{
-      try{
-        const response = await CheckToken();
-        if(!response.ok){
-          navigate('../login')
-        }
-      }
-      catch(error){
-        console.log(error);
-      }
-    }
-    fetchData();
-  },[]);
   return (
     <section>
       <h2>Create a Blog Post</h2>

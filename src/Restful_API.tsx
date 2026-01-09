@@ -1,5 +1,5 @@
 import React,{useState} from 'react';
-import type { User } from './myType';
+import type { Post, Reply, User } from './myType';
 //user
 export function AddUser(user:User){
     const headers:Headers = new Headers();
@@ -16,9 +16,10 @@ export function VerifyUser(user:User){
         const headers:Headers = new Headers();
     headers.set('Content-Type','application/json');
     headers.set('Accept','application/json');
+    console.log(user.username);
     const request: RequestInfo = new Request("http://localhost:8000/login",{
         method:'POST',
-        // credentials:'include',
+        credentials:'include',
         headers:headers,
         body: JSON.stringify(user)
     });
@@ -38,7 +39,7 @@ export function RenderPost(){
     });
     return fetch(request);
 }
-export function AddPost(data:string){
+export function AddPost(data:Post){
     const headers:Headers = new Headers();
     headers.set('Content-Type','application/json');
     headers.set('Accept','application/json');
@@ -71,15 +72,65 @@ export function UpdatePost(){
     });
     return fetch(request);
 }
+
+export function GetPost(id:string){
+    const headers:Headers = new Headers();
+    headers.set('Content-Type','application/json');
+    headers.set('Accept','application/json');
+    const request: RequestInfo = new Request("http://localhost:8000/getposts",{
+        method:'POST',
+        headers:headers,
+        body: JSON.stringify(parseInt(id))
+    });
+    return fetch(request); 
+}
+//Login and Logout
+
 export function CheckToken(){
     const headers:Headers = new Headers();
     headers.set('Content-Type','application/json');
     headers.set('Accept','application/json');
     const request: RequestInfo = new Request("http://localhost:8000/cookies",{
         method:'POST',
+        credentials:'include',
         headers:headers,
-        // credentials:'include',
         body: JSON.stringify("")
+    });
+    return fetch(request);
+}
+export function LogOut(){
+    const headers:Headers = new Headers();
+    headers.set('Content-Type','application/json');
+    headers.set('Accept','application/json');
+    const request: RequestInfo = new Request("http://localhost:8000/logout",{
+        method:'POST',
+        credentials:'include',
+        headers:headers,
+        body: JSON.stringify("")
+    });
+    return fetch(request);
+}
+
+//Replies
+export function RenderReplies(id:number){
+    const headers: Headers = new Headers();
+    headers.set('Content-Type','application/json');
+    headers.set('Accept','application/json');
+    const request: RequestInfo = new Request("http://localhost:8000/getreplies",{
+        method:'POST',
+        headers:headers,
+        body:JSON.stringify(id)
+    });
+    return fetch(request);
+}
+export function AddReply(data:Reply){
+    const headers:Headers = new Headers();
+    headers.set('Content-Type','application/json');
+    headers.set('Accept','application/json');
+    const request: RequestInfo = new Request("http://localhost:8000/createreply",{
+        method:'POST',
+        headers:headers,
+        body: JSON.stringify(data)
     });
     return fetch(request);
 }

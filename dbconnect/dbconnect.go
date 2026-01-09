@@ -3,53 +3,101 @@ package dbconnect
 import (
 	"context"
 	"fmt"
+	"forum/backend/custom_error"
 	myTypes "forum/backend/myTypes"
+	"net/http"
 	"os"
 
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
+	"golang.org/x/crypto/bcrypt"
 )
 
-var global_conn *pgx.Conn
+var db *pgxpool.Pool
 
 // This is data base connection function
 func DBconnect() {
-	conn, err := pgx.Connect(context.Background(),
+	dbpool, err := pgxpool.New(context.Background(),
 		"postgres://postgres:vulturechoujin@localhost:5000/Forum")
-	global_conn = conn
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
 		os.Exit(1)
 	}
-	// defer conn.Close(context.Background())
+	db = dbpool
+	if err := db.Ping(context.Background()); err != nil {
+		fmt.Printf("Ping: %v", err)
+	}
 	fmt.Println("Connected")
 }
-func CountUser(myUser myTypes.User) int {
+
+// USER table
+func hashPassword(password string) (string, error) {
+	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
+	return string(bytes), err
+}
+
+func CountUser(myUser myTypes.User) (int, error) {
 	sql := `SELECT COUNT(user_id) AS cnt FROM users
 	WHERE username = $1`
 	var cnt int
-	err := global_conn.QueryRow(context.Background(), sql, myUser.Username).Scan(&cnt)
+	err := db.QueryRow(context.Background(), sql, myUser.Username).Scan(&cnt)
 	if err != nil {
-		return -1 /// error has occured
+		return 0, err /// error has occured
 	}
-	return cnt
+	return cnt, nil
 }
-func FindUser(myUser myTypes.User) (int, string, string) {
-	sql := `SELECT user_id,username,pass FROM users
+func FindUser(myUser myTypes.User) (string, string, error) {
+	sql := `SELECT username,pass FROM users
 	WHERE username = $1`
 	var username, password string
-	var id int
-	err := global_conn.QueryRow(context.Background(), sql, myUser.Username).Scan(&id, &username, &password)
+	err := db.QueryRow(context.Background(), sql, myUser.Username).Scan(&username, &password)
 	if err != nil {
-		return -1, "", "" /// error has occured
+		return "", "", err /// error has occured
 	}
-	return id, username, password
+	return username, password, nil
 }
 func NewUser(newuser myTypes.User) error {
 	sql := `INSERT INTO users (username,pass) 
 	Values ($1,$2)
 	RETURNING user_id`
 	var id int
-	err := global_conn.QueryRow(context.Background(), sql, newuser.Username, newuser.Password).Scan(&id)
+	newPassword, err := hashPassword(newuser.Password)
+	if err != nil {
+		return &custom_error.UserError{
+				StatusCode: http.StatusBadRequest,
+				Type:       "INVALID_ACCOUNT",
+				Message:    "Password exceeds the limit, please try another one",
+			}
+	}
+	err2 := db.QueryRow(context.Background(), sql, newuser.Username, newPassword).Scan(&id)
+	if err2 != nil {
+		return fmt.Errorf("error creating task: %w", err)
+	}
+	// fmt.Printf("Success")
+	fmt.Printf("Created task with ID %d\n", id)
+	return nil
+}
+
+// Post Table
+func ReturnPosts() ([]myTypes.Post, error) {
+	sql := `SELECT post_id,coalesce(post_username,'Unknown') as post_username,post_content FROM posts`
+	var blogs []myTypes.Post
+	rows, _ := db.Query(context.Background(), sql)
+	defer rows.Close()
+	blogs, err := pgx.CollectRows(rows, pgx.RowToStructByName[myTypes.Post])
+	fmt.Println(blogs)
+	if err != nil {
+		return nil, fmt.Errorf("error iterating task row :%w", err)
+	}
+	return blogs, nil
+}
+
+func NewPost(newContent myTypes.Post) error {
+	sql := `INSERT INTO posts (post_content,post_username) 
+	Values ($1,$2)
+	RETURNING post_id`
+	var id int
+	err := db.QueryRow(context.Background(), sql, newContent.Post_Content, newContent.Post_Username).Scan(&id)
 	if err != nil {
 		return fmt.Errorf("error creating task: %w", err)
 	}
@@ -57,34 +105,39 @@ func NewUser(newuser myTypes.User) error {
 	fmt.Printf("Created task with ID %d\n", id)
 	return nil
 }
-func ReturnPosts() ([]myTypes.Post, error) {
-	sql := `SELECT post_id,post_content FROM posts`
-	var blogs []myTypes.Post
-	rows, err := global_conn.Query(context.Background(), sql)
+
+func ReadPost(id int) (myTypes.Post, error) {
+	sql := `SELECT post_id,post_username, post_content FROM posts WHERE post_id = $1`
+	rows, _ := db.Query(context.Background(), sql, id)
+	post, err := pgx.CollectExactlyOneRow(rows, pgx.RowToStructByName[myTypes.Post])
 	if err != nil {
-		return nil, fmt.Errorf("error creating task: %w", err)
+		return post, fmt.Errorf("error creating task: %w", err)
 	}
-	defer rows.Close()
-	for rows.Next() {
-		blog := myTypes.Post{}
-		err := rows.Scan(&blog.Post_Id, &blog.Post_Content)
-		if err != nil {
-			return nil, fmt.Errorf("error scanning row: %w", err)
-		}
-		blogs = append(blogs, blog)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("error iterating task row :%w", err)
-	}
-	return blogs, nil
+	return post, nil
 }
 
-func NewPost(newContent string) error {
-	sql := `INSERT INTO posts (post_content,user_id) 
-	Values ($1,2)
-	RETURNING post_id`
+//Reply Table
+
+func ReturnReplies(id int) ([]myTypes.Reply, error) {
+	sql := `SELECT * FROM replies WHERE post_id = $1`
+	rows, _ := db.Query(context.Background(), sql, id)
+	defer rows.Close()
+	replies, err := pgx.CollectRows(rows, pgx.RowToStructByName[myTypes.Reply])
+	fmt.Println(replies)
+	if err != nil {
+		return nil, fmt.Errorf("error iterating task row :%w", err)
+	}
+	return replies, nil
+}
+
+func NewReply(newContent myTypes.Reply) error {
+	sql := `INSERT INTO replies(num_likes,reply_content,reply_username,post_id) 
+	Values ($1,$2,$3,$4)
+	RETURNING reply_id`
 	var id int
-	err := global_conn.QueryRow(context.Background(), sql, newContent).Scan(&id)
+	err := db.QueryRow(context.Background(), sql, newContent.Num_Likes,
+		newContent.Reply_Content, newContent.Reply_Username,
+		newContent.Post_Id).Scan(&id)
 	if err != nil {
 		return fmt.Errorf("error creating task: %w", err)
 	}

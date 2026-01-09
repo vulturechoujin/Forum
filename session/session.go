@@ -2,6 +2,7 @@ package session
 
 import (
 	"fmt"
+	"forum/backend/custom_error"
 	"net/http"
 	"time"
 
@@ -46,18 +47,25 @@ func AuthenticateMiddleware(ct *gin.Context) {
 	tokenString, err := ct.Cookie("token")
 	fmt.Println(tokenString)
 	if err != nil {
-		// fmt.Println("missing")
-		ct.Redirect(http.StatusSeeOther, "/login")
+		fmt.Println("missing")
+		ct.Error(&custom_error.UserError{
+			StatusCode: http.StatusUnauthorized,
+			Type:       "INVALID_COOKIES",
+			Message:    "Not Login",
+		})
+		// ct.Redirect(http.StatusSeeOther, "/login")
 		ct.Abort()
+		return
 	}
 	token, err := VerifyToken(tokenString)
 	if err != nil {
 		fmt.Printf("%+v\n", err)
-		ct.Redirect(http.StatusSeeOther, "/login")
+		ct.Error(err)
+		// ct.Redirect(http.StatusSeeOther, "/login")
 		ct.Abort()
 		return
 	}
 	fmt.Println(token.Claims)
-	ct.JSON(http.StatusOK, "Sucessfully login")
-	ct.Next()
+	username, err := token.Claims.GetSubject()
+	ct.JSON(http.StatusOK, username)
 }

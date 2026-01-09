@@ -2,31 +2,48 @@ package discussion
 
 import (
 	"fmt"
-	dbconnect "forum/backend/dbconnect"
+	"forum/backend/dbconnect"
+	"forum/backend/myTypes"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
 func ReturnPosts(ct *gin.Context) {
-	posts, error := dbconnect.ReturnPosts()
-	if error != nil {
-		fmt.Println(error)
+	posts, err := dbconnect.ReturnPosts()
+	if err != nil {
+		ct.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Internal server error",
+		})
+		fmt.Println(err)
+		return
 	}
 	ct.JSON(http.StatusOK, posts)
 }
 
 func AddPosts(ct *gin.Context) {
 	// fmt.Println(ct.Request.Method)
-	var newContent string
-	response := ""
+	var newContent myTypes.Post
 	if err := ct.BindJSON(&newContent); err != nil {
-		response = "Error , try again"
+		_ = ct.Error(err)
 		return
 	} else {
-		response = "Succesfully posting"
 		dbconnect.NewPost(newContent)
 	}
-	fmt.Println(response)
-	ct.JSON(http.StatusOK, response)
+	ct.JSON(http.StatusOK, gin.H{"message": "Sucessfully creating"})
+}
+
+func GetPost(ct *gin.Context) {
+	var id int
+	if err := ct.BindJSON(&id); err != nil {
+		_ = ct.Error(err)
+		return
+	} else {
+		post, err := dbconnect.ReadPost(id)
+		if err != nil {
+			_ = ct.Error(err)
+			return
+		}
+		ct.JSON(http.StatusAccepted, post)
+	}
 }

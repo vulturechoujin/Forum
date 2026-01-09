@@ -11,18 +11,26 @@ import CreatePage from "./CreatePage";
 import Blog from "./Blog";
 import SignupPage from "./SignupPage";
 import LoginPage from "./LoginPage";
+import { ThemeProvider } from "@emotion/react";
+// const theme = {
+//   palette:{
+//     mode:"light",
+//   }
+// }
 export function App() {
   return(
     // <button> My...</button>
+  // <ThemeProvider theme = {theme}>
   <Router>
     <Routes>
-      <Route path = "/signup" element = {<SignupPage/>}/>
+      <Route path = "/" element = {<SignupPage/>}/>
       <Route path = "/discussion" element = {<Discussion/>}/>
       <Route path = "/discussion/create" element = {<CreatePage/>}/>
       <Route path = "/discussion/post/:id" element = {<Blog/>}/>
       <Route path = "/login" element = {<LoginPage/>}/>
-    </Routes>
+      </Routes>
   </Router>
+  // </ThemeProvider>
   )
 }
 

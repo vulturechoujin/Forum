@@ -1,43 +1,27 @@
-import React, { useEffect } from "react"
+import React, {useState, useEffect, Activity } from "react"
 import {redirect, useNavigate} from 'react-router-dom'
 import { BlogList } from "./BlogList";
-import { CheckToken } from "./Restful_API";
+import Navbar from "./Navbar";
+import { Box, Button, Grid, List, ThemeProvider } from "@mui/material";
 export function Discussion() {
   const navigate = useNavigate();
-  const navigateBlog = ()=>{
+  const navigateCreate = ()=>{
     navigate('./create');
   }
-  useEffect(()=>{
-    const fetchData=async()=>{
-      try{
-        const response = await CheckToken();
-        // if(!response.ok){
-        //   navigate('../login')
-        // }
-      }
-      catch(error){
-        console.log(error);
-      }
-    }
-    fetchData();
-  },[]);
   return (
-    <div className = "grid_container">
-      <div className = "navbar">
-      </div>
-      <div className = "body"> 
-        <div className ="left">
-          <button className = "Add a blog" onClick ={navigateBlog}>
-            +Post
-          </button>
-        </div>
-        <div className = "main-content">
-          <BlogList/>
-        </div>
-      </div>
-      <div className = "footer">
-      </div>
-    </div>
+    <Grid container spacing = {2}>
+      <Grid size = {12}>
+        <Navbar/>
+      </Grid>
+      <Grid size ={4}>
+        <Box sx={{h:'100%',position:'sticky',float:'left'}}>
+        <Button variant = "contained" onClick = {navigateCreate}>+Post</Button>
+        </Box>
+      </Grid>
+      <Grid size = {8}>
+        <BlogList/>
+      </Grid>
+    </Grid>
   )
 };
 
