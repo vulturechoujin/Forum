@@ -1,7 +1,8 @@
 package discussion
 
 import (
-	"fmt"
+	// "fmt"
+
 	"forum/backend/dbconnect"
 	"forum/backend/myTypes"
 	"net/http"
@@ -12,20 +13,17 @@ import (
 func ReturnPosts(ct *gin.Context) {
 	posts, err := dbconnect.ReturnPosts()
 	if err != nil {
-		ct.JSON(http.StatusInternalServerError, gin.H{
-			"error": "Internal server error",
-		})
-		fmt.Println(err)
+		ct.Error(err)
 		return
 	}
-	ct.JSON(http.StatusOK, posts)
+	ct.JSON(http.StatusAccepted, posts)
 }
 
 func AddPosts(ct *gin.Context) {
 	// fmt.Println(ct.Request.Method)
 	var newContent myTypes.Post
 	if err := ct.BindJSON(&newContent); err != nil {
-		_ = ct.Error(err)
+		ct.Error(err)
 		return
 	} else {
 		dbconnect.NewPost(newContent)
@@ -36,14 +34,15 @@ func AddPosts(ct *gin.Context) {
 func GetPost(ct *gin.Context) {
 	var id int
 	if err := ct.BindJSON(&id); err != nil {
-		_ = ct.Error(err)
+		ct.Error(err)
 		return
 	} else {
 		post, err := dbconnect.ReadPost(id)
 		if err != nil {
-			_ = ct.Error(err)
+			ct.Error(err)
 			return
 		}
 		ct.JSON(http.StatusAccepted, post)
 	}
+	// ct.JSON(http.StatusAccepted, "Hello")
 }

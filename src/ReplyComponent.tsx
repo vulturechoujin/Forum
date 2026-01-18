@@ -1,12 +1,18 @@
 import React from "react"
 import type { Reply } from "./myType";
+import { Box, IconButton, Typography } from "@mui/material";
+import { IconAvatar } from "./IconButton";
 
 export function ReplyComponent({reply}:{reply:Reply}) {
   return (
-    <div>
-        <h2>{reply.Reply_Username}</h2>
-        <h2>{reply.Reply_Content}</h2>
-    </div>
+    <Box>
+        <Box>
+          <IconAvatar username = {reply.Reply_Username}/>
+          <Typography>
+            {reply.Reply_Content}
+          </Typography>
+        </Box>
+    </Box>
   )
 };
 

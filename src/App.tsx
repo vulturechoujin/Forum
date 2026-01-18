@@ -12,6 +12,8 @@ import Blog from "./Blog";
 import SignupPage from "./SignupPage";
 import LoginPage from "./LoginPage";
 import { ThemeProvider } from "@emotion/react";
+import Something from "./something";
+import theme from "./Theme";
 // const theme = {
 //   palette:{
 //     mode:"light",
@@ -20,7 +22,6 @@ import { ThemeProvider } from "@emotion/react";
 export function App() {
   return(
     // <button> My...</button>
-  // <ThemeProvider theme = {theme}>
   <Router>
     <Routes>
       <Route path = "/" element = {<SignupPage/>}/>
@@ -28,9 +29,9 @@ export function App() {
       <Route path = "/discussion/create" element = {<CreatePage/>}/>
       <Route path = "/discussion/post/:id" element = {<Blog/>}/>
       <Route path = "/login" element = {<LoginPage/>}/>
-      </Routes>
+      <Route path = "/test" element = {<Something/>}/>
+    </Routes>
   </Router>
-  // </ThemeProvider>
   )
 }
 

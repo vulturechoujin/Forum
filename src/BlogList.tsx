@@ -1,8 +1,13 @@
 import React,{useEffect, useState} from "react"
 import { RenderPost } from "./Restful_API";
 import type { Post } from "./myType";
-import { Link, useNavigate } from 'react-router-dom'
-import { List, ListItem, ListItemText, Typography } from "@mui/material";
+import { useNavigate } from 'react-router-dom'
+import  List  from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemText  from "@mui/material/ListItemText";
+import Typography from "@mui/material/Typography";
+import { Box } from "@mui/material";
+import { IconAvatar } from "./IconButton";
 export function BlogList() {
   const [posts,setPosts] = useState<Post[]>([]);
   const navigate = useNavigate();
@@ -26,23 +31,36 @@ export function BlogList() {
     navigate(`./post/${id}`)
   }
   return (
-    <List>
+    <Box sx={{
+      mx:'auto',
+      display:'flex',
+      flexDirection:'column',
+      width:{
+        'xs':'50%',
+        'sm':400,
+        'md':800,
+      },gap:2
+    }}>
     {posts.map(
-      (post:Post)=>(
-        <ListItem alignItems="flex-start" key={post.Post_Id} onClick = {(e:React.MouseEvent<HTMLLIElement>)=>{navigatePost(post.Post_Id)}}>
-          <ListItemText sx ={{"&:hover":""}} primary ="Theme" secondary={
-            <React.Fragment>
-              <Typography component="span" variant = "body2"
-               sx ={{color:'text.primary',display:'inline'}}>
-                {post.Post_Username}
-               </Typography>
-               {`—${post.Post_Content}`}
-            </React.Fragment>
-          }/>
-        </ListItem> 
-      ))
-    }
-    </List>
+        (post:Post)=>(
+          <Box
+          key={post.Post_Id} onClick = {(e:React.MouseEvent<HTMLDivElement>)=>{navigatePost(post.Post_Id)}} sx={{
+            '&:hover':{
+              boxShadow:3,
+              zIndex:10,
+            },p:1
+          }}>
+            <IconAvatar username={post.Post_Username}/>
+            <Typography variant="h4" sx={{textAlign:'center'}}>
+                My theme
+            </Typography>
+            <Typography variant="body1">
+               {post.Post_Content}
+            </Typography>
+            </Box>
+        ))
+      }
+    </Box>
   )
 };
 

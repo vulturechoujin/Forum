@@ -1,18 +1,32 @@
 import React,{useState,useEffect} from "react"
 import { AddPost, CheckToken } from "./Restful_API";
 import { useNavigate } from "react-router-dom";
-import { useStatus, type Post } from "./myType";
+import { useAPI, useStatus, type Note, type Post } from "./myType";
+import { Box, Typography } from "@mui/material";
+import Message from "./Message";
 export function CreatePage() {
-  const [message,setMessage] = useState<string>(""); 
+  const [message,setMessage] = useState<Note>({
+    value:"",
+    type:""
+  }
+  ); 
   const navigate = useNavigate();
-  const [username,isLogin] = useStatus();
+  const [data,execute] = useAPI(AddPost); 
+  const [username,isLogin,fetchData] = useStatus();
+  const [err,setErr] = useState<Error>();
   useEffect(
     ()=>{
-      if(!isLogin){
-        navigate('/login');
+      const handleStatus  = async()=>{
+        try{
+          await fetchData();
+        }catch(error:unknown){
+          if(!err) setErr(new Error("Unknown error occurs. Please contact us"));
+          else setErr(err);
+        }
       }
+      handleStatus();
     }
-    ,[])
+    ,[isLogin]);
   const CreatePost = async()=>{
       const data = (document.getElementById('create-post') as HTMLInputElement).value;
       console.log(data);
@@ -22,28 +36,42 @@ export function CreatePage() {
         Post_Content:data,
         Post_Username:username
       }
-      const response = await AddPost(newPost);
-      var responseTxt = await response.json();
-      setMessage(responseTxt);
-      console.log(responseTxt);
+      const result = await execute(newPost);
+      let resultJSON;
+      try{
+        resultJSON = await result.json();
+      }catch(err){
+        throw new Error("Invalid server response");
       }
-      catch(err){
-        console.log(err);
+      if(result.ok){
+        setMessage({
+          value:resultJSON.message,
+          type:"success",
+        })
+        setTimeout(()=>{
+          navigate('/discussion');
+        },1000);      
       }
-  }
-  useEffect(()=>  {
-    if(message === "Succesfully posting") {
-      setTimeout(()=>{
-        navigate('/discussion');
-      },100)
+      else{
+        setMessage({
+          value:resultJSON.error,
+          type:"error",
+        })
+      }
+    }catch(e){
+      if(!err) setErr(new Error("Unknown error occurs. Please contact us"));
+      else setErr(err);
     }
-  },[message]);
-  return (
+  }
+  if(err){
+    return (<Box><Typography variant = "h5" color = "error">{err.message}</Typography></Box>)
+  }
+    return (
     <section>
       <h2>Create a Blog Post</h2>
       <textarea name = "create-post" id = "create-post" rows={5} cols ={50}/>
       <button onClick={CreatePost}>Create Post</button>
-      <h3>{message}</h3>
+      <Message type = {message.type} text={message.value}></Message>
     </section>
   )
 };

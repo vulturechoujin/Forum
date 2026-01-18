@@ -2,9 +2,9 @@ package custom_error
 
 import (
 	"errors"
-	"log"
 	"net/http"
 
+	"github.com/getsentry/sentry-go"
 	"github.com/gin-gonic/gin"
 )
 
@@ -25,14 +25,14 @@ func ErrorHandler() gin.HandlerFunc {
 			var UserError *UserError
 			if errors.As(err.Err, &UserError) {
 				ct.JSON(UserError.StatusCode, gin.H{
-					"type":    UserError.Type,
-					"message": UserError.Message,
+					"type":  UserError.Type,
+					"error": UserError.Message,
 				})
 			} else {
 				ct.JSON(http.StatusInternalServerError, gin.H{
 					"error": "Internal server error",
 				})
-				log.Printf("Unhanded error: %s", err.Error())
+				sentry.CaptureException(err)
 			}
 			ct.Abort()
 		}

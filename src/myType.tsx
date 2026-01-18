@@ -29,18 +29,7 @@ export interface Note{
     value:string,
     type:string
 }
-//THEME
-export const theme = createTheme({
-  palette: {
-    primary:{
-      main:'#ffced3'
-    },
-    secondary:{
-      main:'#ffced3',
-    }
-  },
-});
-
+//THEME 
 //Custom Hook
 export function useStatus(){
     const [username,setUsername] = useState<string>("");

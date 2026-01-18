@@ -19,34 +19,37 @@ func CheckPassword(hashedPassword, password string) bool {
 func AddUsers(ct *gin.Context) {
 	// fmt.Println(ct.Request.Method)
 	var newUser myTypes.User
-	response := ""
 	if err := ct.BindJSON(&newUser); err != nil {
 		_ = ct.Error(err)
 		return
 	} else {
 		cnt, err := dbconnect.CountUser(newUser)
 		if err != nil {
-			_ = ct.Error(err)
+			ct.Error(err)
 		}
 		if cnt == 0 {
 			err2 := dbconnect.NewUser(newUser)
-			ct.Error(err2)
+			ct.JSON(http.StatusAccepted, gin.H{
+				"message": "Create successfully, return to login",
+			})
+			if err2 != nil {
+				ct.Error(err2)
+			}
 		} else {
 			_ = ct.Error(&custom_error.UserError{
 				StatusCode: http.StatusBadRequest,
 				Type:       "INVALID_ACCOUNT",
-				Message:    "Username already exists, please change",
+				Message:    "Username already exists, please login",
 			})
 			return
 		}
-		tokenString, err2 := session.CreateToken(newUser.Username)
-		if err2 != nil {
-			_ = ct.Error(err2)
+		tokenString, err3 := session.CreateToken(newUser.Username)
+		if err3 != nil {
+			_ = ct.Error(err3)
 			return
 		}
 		ct.SetCookie("token", tokenString, 3600, "/", "localhost", false, true)
 	}
-	ct.JSON(http.StatusOK, response)
 }
 
 func VerifyUsers(ct *gin.Context) {

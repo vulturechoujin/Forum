@@ -1,9 +1,17 @@
 import React,{useState,useEffect, Activity} from 'react';
 import { VerifyUser } from "./Restful_API.tsx";
-import { theme, useAPI, useFormInput, useStatus, type Note, type User } from "./myType.tsx";
-import { Form, useNavigate } from "react-router-dom";
+import { useAPI, useFormInput, useStatus, type Note, type User } from "./myType.tsx";
+import { useNavigate } from "react-router-dom";
 import Message from './Message.tsx';
-import { Box, Button, FilledInput, FormControl, IconButton, Input, InputAdornment, InputLabel, OutlinedInput, Stack, ThemeProvider, Typography } from '@mui/material';
+import Box  from '@mui/material/Box';
+import Button from '@mui/material/Button'; 
+import FormControl from '@mui/material/FormControl';
+import Input from '@mui/material/Input';
+import  IconButton from '@mui/material/IconButton';
+import  InputAdornment from '@mui/material/InputAdornment';
+import InputLabel from '@mui/material/InputLabel';
+import Stack from '@mui/material/Stack';
+import  Typography from '@mui/material/Typography';
 import Visibility from '@mui/icons-material/Visibility';
 import { VisibilityOff } from '@mui/icons-material';
 export function LoginPage() {
@@ -26,8 +34,8 @@ export function LoginPage() {
         try{
           await fetchData();
         }catch(error:unknown){
-          if(!err) setErr(new Error("Unknown error occurs. Please contact us"));
-          else setErr(err);
+          if(error instanceof Error) setErr(err);
+          else setErr(new Error("Unknown error occurs. Please contact us"));
         }
       }
       handleStatus();
@@ -65,9 +73,9 @@ export function LoginPage() {
           type:"error",
         })
       }
-    }catch(e){
-      if(!err) setErr(new Error("Unknown error occurs. Please contact us"));
-      else setErr(err);
+    }catch(e:unknown){
+      if(e instanceof Error) setErr(e);
+      else setErr(new Error("Unknown error occurs. Please contact us"));
     }
   };
   if(err){

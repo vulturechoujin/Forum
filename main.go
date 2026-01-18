@@ -1,15 +1,22 @@
 package main
 
 import (
-	account "forum/backend/account"
+	// "errors"
+
+	// "time"
+
+	"forum/backend/account"
 	"forum/backend/custom_error"
 	dbconnect "forum/backend/dbconnect"
+	"time"
+
 	"forum/backend/discussion"
 	"forum/backend/reply"
 	"forum/backend/session"
-	"time"
 
 	"github.com/getsentry/sentry-go"
+	sentrygin "github.com/getsentry/sentry-go/gin"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -28,16 +35,21 @@ func CORSMiddleware() gin.HandlerFunc {
 	}
 }
 func main() {
-	dbconnect.DBconnect()
 	sentry.Init(sentry.ClientOptions{
-		Dsn: "https://dbc95b7dfbdb437bbb09ad650f0c23c1@app.glitchtip.com/19317",
+		Dsn:   "https://dbc95b7dfbdb437bbb09ad650f0c23c1@app.glitchtip.com/19317",
+		Debug: true,
 	})
-	defer sentry.Flush(2 * time.Second)
+	dbconnect.DBconnect()
 	router := gin.Default()
 	router.Use(CORSMiddleware())
+	router.Use(sentrygin.New(sentrygin.Options{
+		Repanic:         true,
+		WaitForDelivery: false,
+		Timeout:         5 * time.Second,
+	}))
 	router.Use(custom_error.ErrorHandler())
 	router.SetTrustedProxies([]string{"127.0.0.1:8000"})
-	// router.POST("/users", account.AddUsers)
+	router.POST("/users", account.AddUsers)
 	router.POST("/login", account.VerifyUsers)
 	router.POST("/cookies", session.AuthenticateMiddleware)
 	router.POST("/getposts", discussion.GetPost)
@@ -48,6 +60,6 @@ func main() {
 
 	router.POST("/createreply", reply.AddReplies)
 	router.POST("/getreplies", reply.ReturnReplies)
-
+	router.POST("/likereply", reply.IncrementLike)
 	router.Run("localhost:8000")
 }

@@ -1,37 +1,92 @@
 import React, { useEffect, useState } from "react"
-import type { Reply } from "./myType";
-import { RenderReplies } from "./Restful_API";
+import { useAPI, type Note, type Reply } from "./myType";
+import { LikeReply, RenderReplies } from "./Restful_API";
 import { ReplyComponent } from "./ReplyComponent";
 import { useNavigate } from "react-router-dom";
+import { Box, IconButton, Typography } from "@mui/material";
+import { ThumbUp } from "@mui/icons-material";
 
 export function ReplyList({post_id}:{post_id:number}) {
-  const [replies,setReplies] = useState<Reply[]>([])
-  const navigate = useNavigate()
-  const handleList = async()=>{
-      try{
-        const response = await RenderReplies(post_id);
-        const Replies = await response.json();
-                
-        setReplies(Replies);    
-        // console.log(Posts);
-      }      
-      catch(err){
-        
-      }
-    } 
-    useEffect(()=>{
-      handleList();
+  const [data,execute] = useAPI(RenderReplies)
+  const [likedata,incrementexecute] = useAPI(LikeReply)
+  const [replies,setReplies] = useState<Reply[]>([]);
+  const [message,setMessage] = useState<Note>(
+    {
+      value:"",type:"",
     }
-    ,[])
+  )
+  const [err,setErr] = useState<Error>(); 
+  useEffect(()=>{
+    const handleList = async()=>{
+      try{
+        const result = await execute(post_id);
+        let resultJSON;
+        try{
+        resultJSON = await result.json();
+        }catch(err){
+          throw new Error("Invalid server response");
+        }
+        setReplies(resultJSON);
+        if(result.ok){
+          setMessage({
+            value:resultJSON.message,
+            type:"success",
+          })
+        }
+        else{
+          setMessage({
+            value:resultJSON.error,
+            type:"error",
+          })
+        }
+      }catch(e){
+      if(e instanceof Error){
+        setErr(e);
+      }
+      else setErr(new Error("Unknown error occurs. Please contact us"));
+      }
+    }
+    handleList(); 
+  },[])
+  const onLikeReply= async (Reply_Id:number)=>{
+      setReplies(prev=>prev.map(r=>
+        r.Reply_Id === Reply_Id?
+        {...r,Num_Likes:r.Num_Likes+1}:r
+      ))  
+      try{
+        const result = await incrementexecute(Reply_Id);
+        let resultJSON;
+        try{
+        resultJSON = await result.json();
+        }catch(err){
+          throw new Error("Invalid server response");
+        }
+        if(!result.ok){
+          setMessage({
+            value:resultJSON.error,
+            type:"error",
+          })
+        }
+      }catch(e){
+        if(!err) setErr(new Error("Unknown error occurs. Please contact us"));
+        else setErr(err);
+      } 
+    }
   return (
-    <div>
+    <React.Fragment>
       {replies.map((reply:Reply)=>
       (
-        <section key={reply.Reply_Id} className="comment-box">
-          <ReplyComponent reply ={reply}/>  
-        </section>
+        <Box component="section" key={reply.Reply_Id}>
+          <ReplyComponent reply ={reply}/>
+          <IconButton onClick={()=>onLikeReply(reply.Reply_Id)}>
+            <ThumbUp color = "primary"/>
+          </IconButton>
+          <Typography sx={{display:"inline-block"}}>
+            {reply.Num_Likes}  
+          </Typography>
+        </Box>
       ))}
-    </div>
+    </React.Fragment>
   )
 };
 

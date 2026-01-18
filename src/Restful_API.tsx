@@ -84,6 +84,19 @@ export function GetPost(id:string){
     });
     return fetch(request); 
 }
+export function LikePost(){
+    const headers:Headers = new Headers();
+    headers.set('Content-Type','application/json');
+    headers.set('Accept','application/json');
+    const request: RequestInfo = new Request("http://localhost:8000/likepost",{
+        method:'POST',
+        credentials:'include',
+        headers:headers,
+        body: JSON.stringify("")
+    });
+    return fetch(request);
+}
+
 //Login and Logout
 
 export function CheckToken(){
@@ -110,7 +123,6 @@ export function LogOut(){
     });
     return fetch(request);
 }
-
 //Replies
 export function RenderReplies(id:number){
     const headers: Headers = new Headers();
@@ -134,3 +146,17 @@ export function AddReply(data:Reply){
     });
     return fetch(request);
 }
+export function LikeReply(Reply_Id:number){
+    const headers:Headers = new Headers();
+    headers.set('Content-Type','application/json');
+    headers.set('Accept','application/json');
+    const request: RequestInfo = new Request("http://localhost:8000/likereply",{
+        method:'POST',
+        credentials:'include',
+        headers:headers,
+        body: JSON.stringify(Reply_Id)
+    });
+    return fetch(request);
+}
+
+

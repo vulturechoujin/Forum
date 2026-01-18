@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"forum/backend/custom_error"
 	myTypes "forum/backend/myTypes"
+	"log"
 	"net/http"
-	"os"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -16,18 +16,18 @@ import (
 var db *pgxpool.Pool
 
 // This is data base connection function
-func DBconnect() {
+func DBconnect() error {
 	dbpool, err := pgxpool.New(context.Background(),
 		"postgres://postgres:vulturechoujin@localhost:5000/Forum")
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
-		os.Exit(1)
+		log.Fatalf("sentry.Init %s", err)
 	}
 	db = dbpool
 	if err := db.Ping(context.Background()); err != nil {
-		fmt.Printf("Ping: %v", err)
+		log.Fatalf("sentry.Init %s", err)
 	}
 	fmt.Println("Connected")
+	return nil
 }
 
 // USER table
@@ -63,11 +63,11 @@ func NewUser(newuser myTypes.User) error {
 	var id int
 	newPassword, err := hashPassword(newuser.Password)
 	if err != nil {
-		return &custom_error.UserError{
-				StatusCode: http.StatusBadRequest,
-				Type:       "INVALID_ACCOUNT",
-				Message:    "Password exceeds the limit, please try another one",
-			}
+		return (&custom_error.UserError{
+			StatusCode: http.StatusBadRequest,
+			Type:       "INVALID_ACCOUNT",
+			Message:    "Password exceeds the limit of 72 characters, please try again",
+		})
 	}
 	err2 := db.QueryRow(context.Background(), sql, newuser.Username, newPassword).Scan(&id)
 	if err2 != nil {
@@ -107,7 +107,7 @@ func NewPost(newContent myTypes.Post) error {
 }
 
 func ReadPost(id int) (myTypes.Post, error) {
-	sql := `SELECT post_id,post_username, post_content FROM posts WHERE post_id = $1`
+	sql := `SELECT post_id,COALESCE(post_username,'Unknown') as post_username, post_content FROM posts WHERE post_id = $1`
 	rows, _ := db.Query(context.Background(), sql, id)
 	post, err := pgx.CollectExactlyOneRow(rows, pgx.RowToStructByName[myTypes.Post])
 	if err != nil {
@@ -143,5 +143,16 @@ func NewReply(newContent myTypes.Reply) error {
 	}
 	// fmt.Printf("Success")
 	fmt.Printf("Created task with ID %d\n", id)
+	return nil
+}
+
+func IncrementReplyLike(reply_id int) error {
+	sql := `UPDATE replies
+	SET num_likes = num_likes+1
+	WHERE reply_id = $1`
+	err := db.QueryRow(context.Background(), sql, reply_id)
+	if err != nil {
+		return fmt.Errorf("error creating task: %w", err)
+	}
 	return nil
 }
