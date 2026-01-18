@@ -8,6 +8,7 @@ import (
 	"forum/backend/account"
 	"forum/backend/custom_error"
 	dbconnect "forum/backend/dbconnect"
+	"os"
 	"time"
 
 	"forum/backend/discussion"
@@ -40,6 +41,10 @@ func main() {
 		Debug: true,
 	})
 	dbconnect.DBconnect()
+	port := os.Getenv("Port")
+	if port == "" {
+		port = "8000"
+	}
 	router := gin.Default()
 	router.Use(CORSMiddleware())
 	router.Use(sentrygin.New(sentrygin.Options{
@@ -61,5 +66,5 @@ func main() {
 	router.POST("/createreply", reply.AddReplies)
 	router.POST("/getreplies", reply.ReturnReplies)
 	router.POST("/likereply", reply.IncrementLike)
-	router.Run("localhost:8000")
+	router.Run("localhost:" + port)
 }
