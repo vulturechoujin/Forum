@@ -1,11 +1,11 @@
 import React,{useState} from 'react';
-import type { Post, Reply, User } from './myType';
+import { API_URL, type Post, type Reply, type User } from './myType';
 //user
 export function AddUser(user:User){
     const headers:Headers = new Headers();
     headers.set('Content-Type','application/json');
     headers.set('Accept','application/json');
-    const request: RequestInfo = new Request("http://localhost:8000/users",{
+    const request: RequestInfo = new Request(`${API_URL}/users`,{
         method:'POST',
         headers:headers,
         body: JSON.stringify(user)
@@ -17,7 +17,7 @@ export function VerifyUser(user:User){
     headers.set('Content-Type','application/json');
     headers.set('Accept','application/json');
     console.log(user.username);
-    const request: RequestInfo = new Request("http://localhost:8000/login",{
+    const request: RequestInfo = new Request(`${API_URL}/login`,{
         method:'POST',
         credentials:'include',
         headers:headers,
@@ -33,7 +33,7 @@ export function RenderPost(){
     headers.set('Accept','application/json');
     headers.set('X-Custom-Header', 'CustomValue');
 
-    const request: RequestInfo = new Request("http://localhost:8000/discussion",{
+    const request: RequestInfo = new Request(`${API_URL}/discussion`,{
         method:'GET',
         headers:headers
     });
@@ -43,7 +43,7 @@ export function AddPost(data:Post){
     const headers:Headers = new Headers();
     headers.set('Content-Type','application/json');
     headers.set('Accept','application/json');
-    const request: RequestInfo = new Request("http://localhost:8000/createpost",{
+    const request: RequestInfo = new Request(`${API_URL}/createpost`,{
         method:'POST',
         headers:headers,
         body: JSON.stringify(data)
@@ -54,7 +54,7 @@ export function DeletePost(){
     const headers:Headers = new Headers();
     headers.set('Content-Type','application/json');
     headers.set('Accept','application/json');
-    const request: RequestInfo = new Request("http://localhost:8000/deletepost",{
+    const request: RequestInfo = new Request(`${API_URL}/deletepost`,{
         method:'POST',
         headers:headers,
         body: JSON.stringify("")
@@ -65,7 +65,7 @@ export function UpdatePost(){
     const headers:Headers = new Headers();
     headers.set('Content-Type','application/json');
     headers.set('Accept','application/json');
-    const request: RequestInfo = new Request("http://localhost:8000/updatepost",{
+    const request: RequestInfo = new Request(`${API_URL}/updatepost`,{
         method:'POST',
         headers:headers,
         body: JSON.stringify("")
@@ -77,7 +77,7 @@ export function GetPost(id:string){
     const headers:Headers = new Headers();
     headers.set('Content-Type','application/json');
     headers.set('Accept','application/json');
-    const request: RequestInfo = new Request("http://localhost:8000/getposts",{
+    const request: RequestInfo = new Request(`${API_URL}/getposts`,{
         method:'POST',
         headers:headers,
         body: JSON.stringify(parseInt(id))
@@ -88,7 +88,7 @@ export function LikePost(){
     const headers:Headers = new Headers();
     headers.set('Content-Type','application/json');
     headers.set('Accept','application/json');
-    const request: RequestInfo = new Request("http://localhost:8000/likepost",{
+    const request: RequestInfo = new Request(`${API_URL}/likepost`,{
         method:'POST',
         credentials:'include',
         headers:headers,
@@ -103,7 +103,7 @@ export function CheckToken(){
     const headers:Headers = new Headers();
     headers.set('Content-Type','application/json');
     headers.set('Accept','application/json');
-    const request: RequestInfo = new Request("http://localhost:8000/cookies",{
+    const request: RequestInfo = new Request(`${API_URL}/cookies`,{
         method:'POST',
         credentials:'include',
         headers:headers,
@@ -115,7 +115,7 @@ export function LogOut(){
     const headers:Headers = new Headers();
     headers.set('Content-Type','application/json');
     headers.set('Accept','application/json');
-    const request: RequestInfo = new Request("http://localhost:8000/logout",{
+    const request: RequestInfo = new Request(`${API_URL}/logout`,{
         method:'POST',
         credentials:'include',
         headers:headers,
@@ -128,7 +128,7 @@ export function RenderReplies(id:number){
     const headers: Headers = new Headers();
     headers.set('Content-Type','application/json');
     headers.set('Accept','application/json');
-    const request: RequestInfo = new Request("http://localhost:8000/getreplies",{
+    const request: RequestInfo = new Request(`${API_URL}/getreplies`,{
         method:'POST',
         headers:headers,
         body:JSON.stringify(id)
@@ -139,7 +139,7 @@ export function AddReply(data:Reply){
     const headers:Headers = new Headers();
     headers.set('Content-Type','application/json');
     headers.set('Accept','application/json');
-    const request: RequestInfo = new Request("http://localhost:8000/createreply",{
+    const request: RequestInfo = new Request(`${API_URL}/createreply`,{
         method:'POST',
         headers:headers,
         body: JSON.stringify(data)
@@ -150,7 +150,7 @@ export function LikeReply(Reply_Id:number){
     const headers:Headers = new Headers();
     headers.set('Content-Type','application/json');
     headers.set('Accept','application/json');
-    const request: RequestInfo = new Request("http://localhost:8000/likereply",{
+    const request: RequestInfo = new Request(`${API_URL}/likereply`,{
         method:'POST',
         credentials:'include',
         headers:headers,

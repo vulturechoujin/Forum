@@ -3,7 +3,8 @@ import { CheckToken, LogOut } from './Restful_API';
 import { useNavigate } from 'react-router-dom';
 import { setUser } from '@sentry/browser';
 import { createTheme } from '@mui/material';
-
+//Environment variables
+export const API_URL = process.env.BACKEND_URL;
 //INTERFACE
 export interface User{
     username:string,
