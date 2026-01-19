@@ -7,6 +7,7 @@ import (
 	myTypes "forum/backend/myTypes"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -17,8 +18,11 @@ var db *pgxpool.Pool
 
 // This is data base connection function
 func DBconnect() error {
-	dbpool, err := pgxpool.New(context.Background(),
-		"postgres://postgres:vulturechoujin@localhost:5000/Forum")
+	DATABASE_URL := os.Getenv("DATABASE_URL")
+	if DATABASE_URL == "" {
+		DATABASE_URL = "postgres://postgres:vulturechoujin@localhost:5000/Forum"
+	}
+	dbpool, err := pgxpool.New(context.Background(), DATABASE_URL)
 	if err != nil {
 		log.Fatalf("sentry.Init %s", err)
 	}
