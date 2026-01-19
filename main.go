@@ -66,5 +66,5 @@ func main() {
 	router.POST("/createreply", reply.AddReplies)
 	router.POST("/getreplies", reply.ReturnReplies)
 	router.POST("/likereply", reply.IncrementLike)
-	router.Run("localhost:" + port)
+	router.Run(":" + port)
 }
