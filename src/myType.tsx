@@ -3,8 +3,15 @@ import { CheckToken, LogOut } from './Restful_API';
 import { useNavigate } from 'react-router-dom';
 import { setUser } from '@sentry/browser';
 import { createTheme } from '@mui/material';
-//Environment variables
-export const API_URL = process.env.BACKEND_URL;
+declare module "bun" {
+  interface Env {
+    BUN_PUBLIC_BACKEND_URL:string;
+  }
+}
+export function GetAPIURL(){
+  const API_URL =  import.meta.env.BUN_PUBLIC_BACKEND_URL;
+  return API_URL
+}
 //INTERFACE
 export interface User{
     username:string,

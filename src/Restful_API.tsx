@@ -1,5 +1,6 @@
 import React,{useState} from 'react';
-import { API_URL, type Post, type Reply, type User } from './myType';
+import {GetAPIURL, type Post, type Reply, type User } from './myType';
+const API_URL = GetAPIURL();
 //user
 export function AddUser(user:User){
     const headers:Headers = new Headers();
