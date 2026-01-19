@@ -3,13 +3,14 @@ import { CheckToken, LogOut } from './Restful_API';
 import { useNavigate } from 'react-router-dom';
 import { setUser } from '@sentry/browser';
 import { createTheme } from '@mui/material';
-declare module "bun" {
-  interface Env {
-    BUN_PUBLIC_BACKEND_URL:string;
+declare global {
+  namespace NodeJS {
+    interface ProcessEnv {
+      API_URL: string;
+    }
   }
-}
-export function GetAPIURL(){
-  const API_URL =  import.meta.env.BUN_PUBLIC_BACKEND_URL;
+}export function GetAPIURL(){
+  const API_URL =  process.env.BUN_PUBLIC_BACKEND_URL;
   return API_URL
 }
 //INTERFACE
