@@ -41,7 +41,7 @@ func main() {
 		Debug: true,
 	})
 	dbconnect.DBconnect()
-	port := os.Getenv("Port")
+	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8000"
 	}
@@ -53,7 +53,7 @@ func main() {
 		Timeout:         5 * time.Second,
 	}))
 	router.Use(custom_error.ErrorHandler())
-	router.SetTrustedProxies([]string{"127.0.0.1:8000"})
+	router.SetTrustedProxies([]string{"127.0.0.1:" + port})
 	router.POST("/users", account.AddUsers)
 	router.POST("/login", account.VerifyUsers)
 	router.POST("/cookies", session.AuthenticateMiddleware)
