@@ -23,8 +23,12 @@ import (
 
 func CORSMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		CLIENT_URL := os.Getenv("CLIENT_URL")
+		if CLIENT_URL == "" {
+			CLIENT_URL = "http://localhost:3000"
+		}
 		c.Writer.Header().Set("Content-Type", "application/json")
-		c.Writer.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+		c.Writer.Header().Set("Access-Control-Allow-Origin", CLIENT_URL)
 		c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE, UPDATE")
 		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, X-Max,X-Custom-Header")
 		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
