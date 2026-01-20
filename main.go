@@ -8,6 +8,7 @@ import (
 	"forum/backend/account"
 	"forum/backend/custom_error"
 	dbconnect "forum/backend/dbconnect"
+	"log"
 	"os"
 	"time"
 
@@ -44,6 +45,10 @@ func main() {
 		Dsn:   "https://dbc95b7dfbdb437bbb09ad650f0c23c1@app.glitchtip.com/19317",
 		Debug: true,
 	})
+	if err := dbconnect.RunMigrations(); err != nil {
+		log.Fatalf("Failed to run migration %v", err)
+	}
+	log.Println("Application started")
 	dbconnect.DBconnect()
 	port := os.Getenv("PORT")
 	if port == "" {

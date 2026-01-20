@@ -9,6 +9,9 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/golang-migrate/migrate/v4"
+	_ "github.com/golang-migrate/migrate/v4/database/postgres"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"golang.org/x/crypto/bcrypt"
@@ -17,10 +20,28 @@ import (
 var db *pgxpool.Pool
 
 // This is data base connection function
+
+func RunMigrations() error {
+	DATABASE_URL := os.Getenv("DATABASE_URL")
+	if DATABASE_URL == "" {
+		DATABASE_URL = "postgresql://posgres:r6IYt6eBXh1FWSac5E9nvZFZZ4YPH0vY@dpg-d5mg8jbe5dus73egh6mg-a.singapore-postgres.render.com/forum_dh74?sslmode=require"
+	}
+	m, err := migrate.New(
+		"file://./database/migrations", DATABASE_URL)
+	if err != nil {
+		return fmt.Errorf("Migration failed to ininitialize: %v", err)
+	}
+	if err := m.Up(); err != nil && err != migrate.ErrNoChange {
+		return fmt.Errorf("Failed to apply migrations: %v", err)
+	}
+	log.Println("Migrations applied succesfully")
+	return nil
+}
+
 func DBconnect() error {
 	DATABASE_URL := os.Getenv("DATABASE_URL")
 	if DATABASE_URL == "" {
-		DATABASE_URL = "postgres://postgres:vulturechoujin@localhost:5000/Forum"
+		DATABASE_URL = "postgresql://posgres:r6IYt6eBXh1FWSac5E9nvZFZZ4YPH0vY@dpg-d5mg8jbe5dus73egh6mg-a.singapore-postgres.render.com/forum_dh74?sslmode=require"
 	}
 	dbpool, err := pgxpool.New(context.Background(), DATABASE_URL)
 	if err != nil {

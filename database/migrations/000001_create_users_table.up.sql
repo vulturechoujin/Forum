@@ -1,0 +1,30 @@
+CREATE TABLE users (
+ user_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+ username VARCHAR(50) UNIQUE NOT NULL,
+ password VARCHAR(50) NOT NULL,
+ email VARCHAR(100),
+ created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+ updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+
+);
+CREATE TABLE posts(
+ post_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+ post_username VARCHAR(50) UNIQUE,
+ post_content VARCHAR(50),
+ post_theme VARCHAR(50),
+ CONSTRAINT fk_post_username FOREIGN KEY (post_username) REFERENCES users(username),
+ created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+ updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+
+);
+CREATE TABLE replies(
+ reply_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+ post_id INT NOT NULL,
+ reply_username VARCHAR(50) UNIQUE NOT NULL,
+ num_likes INT  NOT NULL DEFAULT 0,
+ reply_content TEXT NOT NULL,
+ CONSTRAINT fk_post_id FOREIGN KEY (post_id) REFERENCES posts(post_id),
+ CONSTRAINT fk_reply_username FOREIGN KEY (reply_username) REFERENCES users(username),
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+ updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
