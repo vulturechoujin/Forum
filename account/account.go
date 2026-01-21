@@ -30,12 +30,12 @@ func AddUsers(ct *gin.Context) {
 		if cnt == 0 {
 			err2 := dbconnect.NewUser(newUser)
 			if err2 != nil {
-				ct.JSON(http.StatusAccepted, gin.H{
-					"message": "Create successfully, return to login",
-				})
+				ct.Error(err2)
 				return
 			}
-			ct.Error(err2)
+			ct.JSON(http.StatusAccepted, gin.H{
+				"message": "Create successfully, return to login",
+			})
 		} else {
 			_ = ct.Error(&custom_error.UserError{
 				StatusCode: http.StatusBadRequest,

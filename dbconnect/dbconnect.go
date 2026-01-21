@@ -95,6 +95,7 @@ func NewUser(newuser myTypes.User) error {
 		})
 	}
 	err2 := db.QueryRow(context.Background(), sql, newuser.Username, newPassword).Scan(&id)
+	fmt.Println(err2)
 	if err2 != nil {
 		return fmt.Errorf("error creating task: %w", err)
 	}
