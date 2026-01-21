@@ -65,7 +65,7 @@ export function LoginPage() {
         })
         setTimeout(()=>{
           navigate('/discussion');
-        },1000);      
+        },100);      
       }
       else{
         setMessage({

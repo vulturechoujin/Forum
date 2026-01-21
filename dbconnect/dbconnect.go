@@ -20,7 +20,6 @@ import (
 var db *pgxpool.Pool
 
 // This is data base connection function
-
 func RunMigrations() error {
 	DATABASE_URL := os.Getenv("DATABASE_URL")
 	if DATABASE_URL == "" {

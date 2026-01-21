@@ -66,7 +66,7 @@ export function SignupPage() {
         })
         setTimeout(()=>{
           navigate('/login');
-        },2000);      
+        },100);      
       }
       else{
         setMessage({

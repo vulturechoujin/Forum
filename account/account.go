@@ -77,7 +77,7 @@ func VerifyUsers(ct *gin.Context) {
 			return
 		}
 		fmt.Printf("%s\n", tokenString)
-		ct.SetCookie("token", tokenString, 3600, "/", "localhost", false, true)
+		ct.SetCookie("token", tokenString, 3600, "/", "localhost", true, true)
 		ct.JSON(http.StatusAccepted, gin.H{
 			"message": "Login Successfully",
 		})
