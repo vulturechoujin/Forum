@@ -2,8 +2,10 @@ import React,{useState,useEffect} from "react"
 import { AddPost, CheckToken } from "./Restful_API";
 import { useNavigate } from "react-router-dom";
 import { useAPI, useStatus, type Note, type Post } from "./myType";
-import { Box, Typography } from "@mui/material";
+import { Box, Button, Divider, TextField, Typography } from "@mui/material";
 import Message from "./Message";
+import Navbar from "./Navbar";
+import FullwidthBox from "./FullwidthBox";
 export function CreatePage() {
   const [message,setMessage] = useState<Note>({
     value:"",
@@ -63,16 +65,40 @@ export function CreatePage() {
       else setErr(err);
     }
   }
-  if(err){
-    return (<Box><Typography variant = "h5" color = "error">{err.message}</Typography></Box>)
-  }
+  // if(err){
+  //   return (<Box><Typography variant = "h5" color = "error">{err.message}</Typography></Box>)
+  // }
     return (
-    <section>
-      <h2>Create a Blog Post</h2>
-      <textarea name = "create-post" id = "create-post" rows={5} cols ={50}/>
-      <button onClick={CreatePost}>Create Post</button>
-      <Message type = {message.type} text={message.value}></Message>
-    </section>
+      <FullwidthBox>
+        <Navbar/>
+        <Box sx={{width:'inherit',height:'inherit',
+          backgroundColor:'white',
+          display:'flex',
+          flexDirection:'column',alignContent:'center',justifyContent:'center'}}>
+          <Typography sx={{my:1,textAlign:'center',fontSize:20}}>
+            Create a blog post
+          </Typography>
+          <TextField sx={{mb:2,mx:'auto',width:{
+            'xs':'80%',
+            'sm':'80%',
+            'md':400,
+            'lg':800,
+            'xl':800
+          }}} label = "Theme" name = "create-post" id = "create-post" 
+          multiline />
+          <TextField sx={{
+            width:{
+            'md':500,
+            'lg':600,
+            'xl':700
+            },
+            mx:'auto'
+          }}label = "Content" name = "create-post" id = "create-post" rows={3} 
+          multiline/>
+          <Button sx={{width:'max-content',mx:'auto'}}onClick={CreatePost}>Create Post</Button>
+          <Message type = {message.type} text={message.value}></Message>
+        </Box>
+      </FullwidthBox>
   )
 };
 

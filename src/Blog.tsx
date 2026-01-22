@@ -8,6 +8,7 @@ import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import { IconAvatar } from "./IconButton";
 import { ThumbUp } from "@mui/icons-material";
+import FullwidthBox from "./FullwidthBox";
 export function Blog() {
     //Declare hooks
   const [username,isLogin,fetchData] = useStatus();
@@ -119,10 +120,7 @@ export function Blog() {
     return <h2>Blog not found</h2>
   }
   return (
-    <Box sx={{
-      p:2,width:'100vw',height:'100vh',
-    display:'flex',alignItems:'center',
-    flexDirection:'column'}}>
+    <FullwidthBox>
       <Box>
         <Box sx = {{display:'flex',justifyContent:'flex-start',justifyItems:'center',
         flexDirection:'column',p:2,m:2,zIndex:10,borderRadius:2,bgcolor:'rgba(0, 0, 0, 0.04)',
@@ -157,7 +155,7 @@ export function Blog() {
         </Button> 
         <ReplyList post_id ={post.Post_Id}/>
       </Box>
-    </Box>
+    </FullwidthBox>
   )
 };
 

@@ -2,7 +2,9 @@ import React, { Activity, useEffect, useState } from "react"
 import { useAPI, useStatus } from "./myType";
 import { useNavigate } from "react-router-dom";
 import { LogOut } from "./Restful_API";
-import { Avatar, Box, Button, IconButton, Typography } from "@mui/material";
+import { AppBar, Avatar, Box, Button, IconButton, Toolbar, Typography } from "@mui/material";
+import { StickyNote2 } from "@mui/icons-material";
+import AddIcon from '@mui/icons-material/Add';
 export function Navbar() {
   const [username,isLogin,fetchData] = useStatus();
   const [data,execute] = useAPI(LogOut);
@@ -10,6 +12,9 @@ export function Navbar() {
   const navigate = useNavigate();
   const navigateLogin = ()=>{
     navigate('../login');
+  }
+  const navigateCreate = ()=>{
+    navigate('./create')
   }
   useEffect(
     ()=>{
@@ -38,66 +43,83 @@ export function Navbar() {
       } 
   }
   return (
-    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2}}>
+    <Box sx={{
+      width:'inherit',
+      display:'flex',
+      flexDirection:'row',
+      gap:2,
+      p:2
+    }}>
+        <Typography variant="h6" sx={{flexGrow:1}}>
+          MyForum
+        </Typography>
+        <Button onClick={navigateCreate}
+            startIcon={<AddIcon/>}
+            sx={{
+              display: { xs: "none", sm: "inline-flex" },
+            }}
+          >
+            Add Post
+        </Button>
         <Activity mode = {isLogin?'visible':'hidden'}>
-          <IconButton
+        <IconButton
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1,
+            borderRadius: 2,
+            px: 1.5,
+            py: 0.5,
+            '&:hover': {
+              bgcolor: 'action.hover',
+            },
+          }}
+        >
+          <Avatar
             sx={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 1,
-              borderRadius: 2,
-              px: 1.5,
-              py: 0.5,
-              '&:hover': {
-                bgcolor: 'action.hover',
-              },
+              width: 32,
+              height: 32,
+              bgcolor: 'primary.main',
+              fontSize: '0.875rem',
             }}
           >
-            <Avatar
-              sx={{
-                width: 32,
-                height: 32,
-                bgcolor: 'primary.main',
-                fontSize: '0.875rem',
-              }}
-            >
-              {username.charAt(0).toUpperCase()}
-            </Avatar>
-            <Typography
-              variant="body2"
-              sx={{
-                fontWeight: 500,
-                display: { xs: 'none', sm: 'block' },
-              }}
-            >
-              {username}
-            </Typography>
-          </IconButton>
-          <Button
-            variant="contained"
-            onClick={handleLogOut}
+            {username.charAt(0).toUpperCase()}
+          </Avatar>
+          <Typography
+            variant="body2"
             sx={{
-              borderRadius: 2,
-              textTransform: 'none',
-              fontWeight: 600,
+              fontWeight: 500,
+              display: { xs: 'none', sm: 'block' },
             }}
           >
-            Logout
-          </Button>
-        </Activity>
-        <Activity mode = {isLogin?'hidden':'visible'}>
-          <Button
-            variant="contained"
-            onClick={navigateLogin}
-            sx={{
-              borderRadius: 2,
-              textTransform: 'none',
-              fontWeight: 600,
-            }}
-          >
-            Login
-          </Button>
-        </Activity>
+            {username}
+          </Typography>
+        </IconButton>
+        <Button
+          variant="contained"
+          onClick={handleLogOut}
+          sx={{
+            borderRadius: 2,
+            textTransform: 'none',
+            fontWeight: 600,
+          }}
+        >
+          Logout
+        </Button>
+      </Activity>
+      <Activity mode = {isLogin?'hidden':'visible'}>
+        <Button
+          variant="contained"
+          onClick={navigateLogin}
+          sx={{
+            borderRadius: 2,
+            textTransform: 'none',
+            fontWeight: 600,
+          }}
+        >
+          Login
+        </Button>
+      </Activity>
     </Box>
   )
 };

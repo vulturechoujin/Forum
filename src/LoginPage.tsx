@@ -13,10 +13,13 @@ import InputLabel from '@mui/material/InputLabel';
 import Stack from '@mui/material/Stack';
 import  Typography from '@mui/material/Typography';
 import Visibility from '@mui/icons-material/Visibility';
-import { VisibilityOff } from '@mui/icons-material';
+import { LockOutline, VisibilityOff } from '@mui/icons-material';
+import { Avatar, Card, CardContent, Checkbox,FormControlLabel,Link} from '@mui/material';
+import FullwidthBox from './FullwidthBox.tsx';
 export function LoginPage() {
   const usernameProps = useFormInput();
   const passwordProps = useFormInput();
+  const [checked, setChecked] = useState(true);
   const [data,execute] = useAPI(VerifyUser); 
   const [showPassword,setShowPassword]=useState<boolean>(false);
   const [username,isLogin,fetchData] = useStatus();
@@ -78,40 +81,95 @@ export function LoginPage() {
       else setErr(new Error("Unknown error occurs. Please contact us"));
     }
   };
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setChecked(event.target.checked);
+  };
   if(err){
     return (<Box><Typography variant = "h5" color = "error">{err.message}</Typography></Box>)
   }
   //React Component
   return (
-    // <ThemeProvider theme = {theme}>
-        <div>
-        <Box sx = {{p:2,border:'1px solid black',zIndex:1,boxShadow:1}} >
-          <Stack direction = "column" spacing = {2}> 
-            <FormControl sx={{ m: 1, width: '25ch' }}  variant = "standard">
-              <InputLabel htmlFor = "standard-adornment-username">Username</InputLabel>
-              <Input id = "standard-adornment-username" type = "text" {...usernameProps}/>
-            </FormControl>
-            <FormControl sx={{ m: 1, width: '25ch' }}  variant = "standard">
-              <InputLabel htmlFor = "password">Password</InputLabel>
-              <Input type ={showPassword?'text':'password'} id="password"
-              {...passwordProps}
-              endAdornment={
-                <InputAdornment position="end">
-                  <IconButton
-                  aria-label={showPassword?'hide the password':'display the password'}
-                  onClick={handleClickShowPassword}
-                  edge = "end">
-                    {showPassword?<VisibilityOff/> : <Visibility/>}
-                  </IconButton>
-                </InputAdornment>
-              } required></Input>
-            </FormControl>
-        </Stack>
-        <Button onClick = {handleLogin}>Login</Button> 
-        <Message type = {message.type} text={message.value} ></Message>
-        </Box>
-        </div>
-    // </ThemeProvider>
+    <FullwidthBox>
+      <Card sx={{width:'100%',maxWidth:390, minHeight: { xs: 460, sm: 520 },borderRadius:2,boxShadow:3}}>
+        <CardContent sx={{p:{
+          xs:3,sm:4    
+        },py:'auto' }}>
+          <Box sx={{ display: "flex", justifyContent: "center", mb: 2, }}>
+            <Avatar sx={{ bgcolor: "primary.main",
+               width:{
+                xs:48,sm:56
+               }, height: {
+                xs:48,sm:56
+               } }}>
+              <LockOutline />
+            </Avatar>
+          </Box>
+          <Typography align="center" variant="h5" sx={{
+            fontWeight:'fontWeightBold'
+          }}>
+            Sign in
+          </Typography>
+                    <Typography
+            variant="body2"
+            align="center"
+            color="text.secondary"
+            sx={{ mb: 3 }}
+          >
+            Enter your credentials to continue
+          </Typography>
+            <Box sx={{
+              backgroundColor:'white'}}> 
+              <FormControl variant = "standard" fullWidth sx={{mb:2}}>
+                <InputLabel htmlFor = "standard-adornment-username">Username</InputLabel>
+                <Input sx={{minWidth:0}} id = "standard-adornment-username" type = "text" {...usernameProps}/>
+              </FormControl>
+              <FormControl fullWidth  variant = "standard"
+              sx={{mb:2}}>
+                <InputLabel htmlFor = "password">Password</InputLabel>
+                <Input type ={showPassword?'text':'password'} id="password"
+                {...passwordProps}
+                endAdornment={
+                  <InputAdornment position="end">
+                    <IconButton
+                    aria-label={showPassword?'hide the password':'display the password'}
+                    onClick={handleClickShowPassword}
+                    edge = "end">
+                      {showPassword?<VisibilityOff/> : <Visibility/>}
+                    </IconButton>
+                  </InputAdornment>
+                } required></Input>
+              </FormControl>
+          </Box>
+                     <Box
+            sx={{
+              display: "flex",
+              flexDirection: { xs: "column", sm: "row" }, // 👈 stack on mobile
+              alignItems: { sm: "center" },
+              justifyContent: "space-between",
+              mt: 1,
+              gap: 1,
+            }}
+          >
+            <FormControlLabel
+              control={<Checkbox
+          checked={checked}
+          onChange={handleChange}
+          slotProps={{
+          input: { 'aria-label': 'controlled' },
+          }}
+          />  }
+              label="Remember me"
+            />    
+            <Link href="#" underline="none">
+              Forgot password?
+            </Link>
+          </Box>     
+          <Button fullWidth variant="contained"
+          size="large" onClick = {handleLogin}>Sign in</Button>
+          <Message type = {message.type} text={message.value} ></Message>
+        </CardContent>
+    </Card>
+    </FullwidthBox>
   );
 };
 
