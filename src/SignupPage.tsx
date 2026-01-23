@@ -14,7 +14,7 @@ import IconButton from '@mui/material/IconButton';
 import Button from '@mui/material/Button'
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff  from '@mui/icons-material/VisibilityOff';
-import FullwidthBox from './FullwidthBox.tsx';
+import { FullwidthBoxCenter } from './MyFullwidthBox.tsx';
 import Navbar from './Navbar.tsx';
 import LockOutlineIcon from '@mui/icons-material/LockOutline';
 import { Avatar, Card, CardContent, Checkbox, Divider, FormControlLabel, Link } from '@mui/material';
@@ -92,7 +92,7 @@ export function SignupPage() {
     return (<Box><Typography variant = "h5" color = "error">{err.message}</Typography></Box>)
   }
   return (
-    <FullwidthBox>
+    <FullwidthBoxCenter>
       <Card sx={{width:'100%',maxWidth:390, minHeight: { xs: 460, sm: 520 },borderRadius:2,boxShadow:3}}>
         <CardContent sx={{p:{
           xs:3,sm:4    
@@ -158,7 +158,7 @@ export function SignupPage() {
           <Message type = {message.type} text={message.value} ></Message>
         </CardContent>
     </Card>
-    </FullwidthBox>
+    </FullwidthBoxCenter>
     // </ThemeProvider>
   );
 }

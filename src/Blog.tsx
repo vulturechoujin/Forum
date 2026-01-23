@@ -8,7 +8,8 @@ import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import { IconAvatar } from "./IconButton";
 import { ThumbUp } from "@mui/icons-material";
-import FullwidthBox from "./FullwidthBox";
+import { FullwidthBox } from "./MyFullwidthBox";
+
 export function Blog() {
     //Declare hooks
   const [username,isLogin,fetchData] = useStatus();

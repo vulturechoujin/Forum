@@ -5,7 +5,7 @@ import { useAPI, useStatus, type Note, type Post } from "./myType";
 import { Box, Button, Divider, TextField, Typography } from "@mui/material";
 import Message from "./Message";
 import Navbar from "./Navbar";
-import FullwidthBox from "./FullwidthBox";
+import { FullwidthBox} from "./MyFullwidthBox";
 export function CreatePage() {
   const [message,setMessage] = useState<Note>({
     value:"",

@@ -15,7 +15,7 @@ import  Typography from '@mui/material/Typography';
 import Visibility from '@mui/icons-material/Visibility';
 import { LockOutline, VisibilityOff } from '@mui/icons-material';
 import { Avatar, Card, CardContent, Checkbox,FormControlLabel,Link} from '@mui/material';
-import FullwidthBox from './FullwidthBox.tsx';
+import { FullwidthBox, FullwidthBoxCenter } from './MyFullwidthBox.tsx';
 export function LoginPage() {
   const usernameProps = useFormInput();
   const passwordProps = useFormInput();
@@ -89,11 +89,12 @@ export function LoginPage() {
   }
   //React Component
   return (
-    <FullwidthBox>
-      <Card sx={{width:'100%',maxWidth:390, minHeight: { xs: 460, sm: 520 },borderRadius:2,boxShadow:3}}>
+    <FullwidthBoxCenter>
+        <Card sx={{width:'100%',maxWidth:390, minHeight: { xs: 460, sm: 520 },
+        borderRadius:2,boxShadow:3}}>
         <CardContent sx={{p:{
           xs:3,sm:4    
-        },py:'auto' }}>
+        }, }}>
           <Box sx={{ display: "flex", justifyContent: "center", mb: 2, }}>
             <Avatar sx={{ bgcolor: "primary.main",
                width:{
@@ -168,8 +169,8 @@ export function LoginPage() {
           size="large" onClick = {handleLogin}>Sign in</Button>
           <Message type = {message.type} text={message.value} ></Message>
         </CardContent>
-    </Card>
-    </FullwidthBox>
+        </Card>
+    </FullwidthBoxCenter>
   );
 };
 
