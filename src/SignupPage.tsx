@@ -19,6 +19,7 @@ import Navbar from './Navbar.tsx';
 import LockOutlineIcon from '@mui/icons-material/LockOutline';
 import { Avatar, Card, CardContent, Checkbox, Divider, FormControlLabel, Link } from '@mui/material';
 import { CheckBox, CheckBoxOutlineBlank, type BorderColor } from '@mui/icons-material';
+import { captureException } from '@sentry/browser';
 
 export function SignupPage() {
     const usernameProps = useFormInput();
@@ -33,7 +34,7 @@ export function SignupPage() {
         type:""
       }
     );
-    const [err,setErr] = useState<Error>();
+    const [isErr,setisErr] = useState<Boolean>(false);
     const navigate = useNavigate();
     useEffect(
     ()=>{
@@ -41,8 +42,8 @@ export function SignupPage() {
         try{
           await fetchData();
         }catch(error:unknown){
-          if(error instanceof Error) setErr(err);
-          else setErr(new Error("Unknown error occurs. Please contact us"));
+          captureException(error);
+          setisErr(true);
         }
       }
       handleStatus();
@@ -81,15 +82,15 @@ export function SignupPage() {
         })
       }
     }catch(e:unknown){
-      if(e instanceof Error) setErr(e);
-      else setErr(new Error("Unknown error occurs. Please contact us"));
+      captureException(e);
+      setisErr(true);
     }
   };
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setChecked(event.target.checked);
   };
-  if(err){
-    return (<Box><Typography variant = "h5" color = "error">{err.message}</Typography></Box>)
+  if(isErr){
+    return (<Box><Typography variant = "h5" color = "error">Something has happened. Please contact us.</Typography></Box>)
   }
   return (
     <FullwidthBoxCenter>

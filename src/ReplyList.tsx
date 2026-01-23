@@ -5,6 +5,7 @@ import { ReplyComponent } from "./ReplyComponent";
 import { useNavigate } from "react-router-dom";
 import { Box, IconButton, Typography } from "@mui/material";
 import { ThumbUp } from "@mui/icons-material";
+import { captureException } from "@sentry/browser";
 
 export function ReplyList({post_id}:{post_id:number}) {
   const [data,execute] = useAPI(RenderReplies)
@@ -15,7 +16,7 @@ export function ReplyList({post_id}:{post_id:number}) {
       value:"",type:"",
     }
   )
-  const [err,setErr] = useState<Error>(); 
+  const [isErr,setisErr] = useState<Boolean>(false);
   useEffect(()=>{
     const handleList = async()=>{
       try{
@@ -40,10 +41,8 @@ export function ReplyList({post_id}:{post_id:number}) {
           })
         }
       }catch(e){
-      if(e instanceof Error){
-        setErr(e);
-      }
-      else setErr(new Error("Unknown error occurs. Please contact us"));
+          captureException(e);
+          setisErr(true);
       }
     }
     handleList(); 
@@ -68,8 +67,8 @@ export function ReplyList({post_id}:{post_id:number}) {
           })
         }
       }catch(e){
-        if(!err) setErr(new Error("Unknown error occurs. Please contact us"));
-        else setErr(err);
+          captureException(e);
+          setisErr(true);
       } 
     }
   return (

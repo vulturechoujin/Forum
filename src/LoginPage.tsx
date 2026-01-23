@@ -16,6 +16,7 @@ import Visibility from '@mui/icons-material/Visibility';
 import { LockOutline, VisibilityOff } from '@mui/icons-material';
 import { Avatar, Card, CardContent, Checkbox,CircularProgress,FormControlLabel,Link} from '@mui/material';
 import { FullwidthBox, FullwidthBoxCenter } from './MyFullwidthBox.tsx';
+import { captureException } from '@sentry/browser';
 export function LoginPage() {
   const usernameProps = useFormInput();
   const passwordProps = useFormInput();
@@ -32,7 +33,7 @@ export function LoginPage() {
   //Img
   const [load,setLoad] = useState<boolean>(false);
   const [locationImg, setLocationImg] = useState(null);
-  const [err,setErr] = useState<Error>();
+  const [isErr,setisErr] = useState<Boolean>(false);
   const navigate = useNavigate();
   //Front end handling
   useEffect(
@@ -41,8 +42,8 @@ export function LoginPage() {
         try{
           await fetchData();
         }catch(error:unknown){
-          if(error instanceof Error) setErr(err);
-          else setErr(new Error("Unknown error occurs. Please contact us"));
+          captureException(error);
+          setisErr(true);
         }
       }
       handleStatus();
@@ -82,15 +83,15 @@ export function LoginPage() {
         })
       }
     }catch(e:unknown){
-      if(e instanceof Error) setErr(e);
-      else setErr(new Error("Unknown error occurs. Please contact us"));
+      captureException(e);
+      setisErr(true);
     }
   };
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setChecked(event.target.checked);
   };
-  if(err){
-    return (<Box><Typography variant = "h5" color = "error">{err.message}</Typography></Box>)
+  if(isErr){
+    return (<Box><Typography variant = "h5" color = "error">Something has happened. Please contact us.</Typography></Box>)
   }
   //React Component
   return (

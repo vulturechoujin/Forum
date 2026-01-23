@@ -9,6 +9,7 @@ import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import { IconAvatar } from "./IconButton";
 import { ThumbUp } from "@mui/icons-material";
 import { FullwidthBox } from "./MyFullwidthBox";
+import { captureException } from "@sentry/browser";
 
 export function Blog() {
     //Declare hooks
@@ -16,7 +17,7 @@ export function Blog() {
   const [replydata,replyexecute] = useAPI(AddReply); 
   const [postdata,postexecute] = useAPI(GetPost)
   const [likedata,incrementexecute] = useAPI(LikePost)
-  const [err,setErr] = useState<Error>();
+  const [isErr,setisErr] = useState<Boolean>(false);
   const navigate = useNavigate();
   const [message,setMessage] = useState<Note>({
     value:"",
@@ -25,7 +26,8 @@ export function Blog() {
   const [post,setPost] = useState<Post>({
     Post_Content:"",
     Post_Username:"",
-    Post_Id:0
+    Post_Id:0,
+    Post_Theme:""
   })
   const {id} = useParams();
   if(id === undefined){
@@ -51,9 +53,9 @@ export function Blog() {
               type:"error",
             })
           }
-        }catch(error:unknown){
-          if(!err) setErr(new Error("Unknown error occurs. Please contact us"));
-          else setErr(err);
+        }catch(err:unknown){
+          captureException(err);
+          setisErr(true);
         }
       }
       handleStatus();
@@ -86,8 +88,7 @@ export function Blog() {
         })
       }
     }catch(e){
-      if(!err) setErr(new Error("Unknown error occurs. Please contact us"));
-      else setErr(err);
+      captureException(e);
     }
   }
   const navigateFocus=(e:React.MouseEvent<HTMLButtonElement>)=>{
@@ -109,13 +110,12 @@ export function Blog() {
         })
       }
     }catch(e){
-      if(!err) setErr(new Error("Unknown error occurs. Please contact us"));
-      else setErr(err);
+      captureException(e);
     }
   }
   //RETURN 
-  if(err){
-    return (<Box><Typography variant = "h5" color = "error">{err.message}</Typography></Box>)
+  if(isErr){
+    return (<Box><Typography variant = "h5" color = "error">Something has happened. Please contact us</Typography></Box>)
   }
   if(post.Post_Id===0){
     return <h2>Blog not found</h2>

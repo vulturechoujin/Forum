@@ -8,7 +8,7 @@ type Post struct {
 	Post_Id       int    `db:"post_id"`
 	Post_Username string `db:"post_username"`
 	Post_Content  string `db:"post_content"`
-	Post_Theme    string `db:"post_theme`
+	Post_Theme    string `db:"post_theme"`
 }
 type Reply struct {
 	Reply_Id       int    `db:"reply_id"`

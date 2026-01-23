@@ -13,13 +13,17 @@ import SignupPage from "./SignupPage";
 import LoginPage from "./LoginPage";
 import { ThemeProvider } from "@emotion/react";
 import Something from "./something";
-import theme from "./Theme";
+import * as Sentry from "@sentry/react";
 // const theme = {
 //   palette:{
 //     mode:"light",
 //   }
 // }
 export function App() {
+    Sentry.init({
+    dsn:process.env.BUN_PUBLIC_SENTRY_DNS,
+    tracesSampleRate:1.0
+  })
   return(
     // <button> My...</button>
   <Router>

@@ -105,7 +105,7 @@ func NewUser(newuser myTypes.User) error {
 
 // Post Table
 func ReturnPosts() ([]myTypes.Post, error) {
-	sql := `SELECT post_id,coalesce(post_username,'Unknown') as post_username,post_content,post_theme FROM posts`
+	sql := `SELECT post_id,coalesce(post_username,'Unknown') as post_username,post_content,coalesce(post_theme,'My theme') as post_theme FROM posts`
 	var blogs []myTypes.Post
 	rows, _ := db.Query(context.Background(), sql)
 	defer rows.Close()
@@ -133,7 +133,7 @@ func NewPost(newContent myTypes.Post) error {
 }
 
 func ReadPost(id int) (myTypes.Post, error) {
-	sql := `SELECT post_id,COALESCE(post_username,'Unknown') as post_username, post_content,post_theme FROM posts WHERE post_id = $1`
+	sql := `SELECT post_id,COALESCE(post_username,'Unknown') as post_username, post_content,coalesce(post_theme) as post_theme FROM posts WHERE post_id = $1`
 	rows, _ := db.Query(context.Background(), sql, id)
 	post, err := pgx.CollectExactlyOneRow(rows, pgx.RowToStructByName[myTypes.Post])
 	if err != nil {

@@ -6,6 +6,7 @@ import { Box, Button, Divider, TextField, Typography } from "@mui/material";
 import Message from "./Message";
 import Navbar from "./Navbar";
 import { FullwidthBox} from "./MyFullwidthBox";
+import { captureException } from "@sentry/browser";
 export function CreatePage() {
   const [message,setMessage] = useState<Note>({
     value:"",
@@ -15,15 +16,15 @@ export function CreatePage() {
   const navigate = useNavigate();
   const [data,execute] = useAPI(AddPost); 
   const [username,isLogin,fetchData] = useStatus();
-  const [err,setErr] = useState<Error>();
+  const [isErr,setisErr] = useState<Boolean>(false);
   useEffect(
     ()=>{
       const handleStatus  = async()=>{
         try{
           await fetchData();
         }catch(error:unknown){
-          if(!err) setErr(new Error("Unknown error occurs. Please contact us"));
-          else setErr(err);
+          captureException(error);
+          setisErr(true);
         }
       }
       handleStatus();
@@ -63,13 +64,13 @@ export function CreatePage() {
         })
       }
     }catch(e){
-      if(!err) setErr(new Error("Unknown error occurs. Please contact us"));
-      else setErr(err);
+          captureException(e);
+          setisErr(true);
     }
   }
-  // if(err){
-  //   return (<Box><Typography variant = "h5" color = "error">{err.message}</Typography></Box>)
-  // }
+  if(isErr){
+    return (<Box><Typography variant = "h5" color = "error"></Typography></Box>)
+  }
     return (
       <FullwidthBox>
         <Navbar/>

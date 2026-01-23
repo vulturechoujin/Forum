@@ -2,15 +2,14 @@ import React,{useEffect, useState} from "react"
 import { RenderPost } from "./Restful_API";
 import type { Post } from "./myType";
 import { useNavigate } from 'react-router-dom'
-import  List  from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemText  from "@mui/material/ListItemText";
 import Typography from "@mui/material/Typography";
 import { Box } from "@mui/material";
 import { IconAvatar } from "./IconButton";
+import { captureException } from "@sentry/browser";
 export function BlogList() {
   const [posts,setPosts] = useState<Post[]>([]);
   const navigate = useNavigate();
+  const [isErr,setisErr] = useState<Boolean>(false);
   const handleList = async()=>{
     try{
       const response = await RenderPost();
@@ -20,7 +19,8 @@ export function BlogList() {
       // console.log(Posts);
     }      
     catch(err){
-      console.log(err);
+      captureException(err);
+      setisErr(true);
     }
   } 
   useEffect(()=>{

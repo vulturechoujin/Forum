@@ -5,10 +5,11 @@ import { LogOut } from "./Restful_API";
 import { AppBar, Avatar, Box, Button, IconButton, Toolbar, Typography } from "@mui/material";
 import { StickyNote2 } from "@mui/icons-material";
 import AddIcon from '@mui/icons-material/Add';
+import { captureException } from "@sentry/browser";
 export function Navbar() {
   const [username,isLogin,fetchData] = useStatus();
   const [data,execute] = useAPI(LogOut);
-  const [err,setErr] = useState<Error>()
+  const [isErr,setisErr] = useState<Boolean>(false);
   const navigate = useNavigate();
   const navigateLogin = ()=>{
     navigate('../login');
@@ -22,8 +23,8 @@ export function Navbar() {
         try{
           await fetchData();
         }catch(error:unknown){
-          if(!err) setErr(new Error("Unknown error occurs. Please contact us"));
-          else setErr(err);
+          captureException(error);
+          setisErr(true);
         }
       }
       handleStatus();
