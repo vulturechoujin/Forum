@@ -30,13 +30,15 @@ export function CreatePage() {
     }
     ,[isLogin]);
   const CreatePost = async()=>{
-      const data = (document.getElementById('create-post') as HTMLInputElement).value;
+      const data1 = (document.getElementById('create-content') as HTMLInputElement).value;
+      const data2 = (document.getElementById('create-theme') as HTMLInputElement).value;
       console.log(data);
       try{
       let newPost:Post = {
         Post_Id:0,
-        Post_Content:data,
-        Post_Username:username
+        Post_Content:data1,
+        Post_Username:username,
+        Post_Theme:data2
       }
       const result = await execute(newPost);
       let resultJSON;
@@ -84,7 +86,7 @@ export function CreatePage() {
             'md':400,
             'lg':800,
             'xl':800
-          }}} label = "Theme" name = "create-post" id = "create-post" 
+          }}} label = "Theme" name = "create-post" id = "create-theme" 
           multiline />
           <TextField sx={{
             width:{
@@ -93,7 +95,7 @@ export function CreatePage() {
             'xl':700
             },
             mx:'auto'
-          }}label = "Content" name = "create-post" id = "create-post" rows={3} 
+          }}label = "Content" name = "create-post" id = "create-content" rows={3} 
           multiline/>
           <Button sx={{width:'max-content',mx:'auto'}}onClick={CreatePost}>Create Post</Button>
           <Message type = {message.type} text={message.value}></Message>

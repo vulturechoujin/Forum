@@ -56,7 +56,7 @@ func DBconnect() error {
 
 // USER table
 func hashPassword(password string) (string, error) {
-	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
+	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 10)
 	return string(bytes), err
 }
 
@@ -105,7 +105,7 @@ func NewUser(newuser myTypes.User) error {
 
 // Post Table
 func ReturnPosts() ([]myTypes.Post, error) {
-	sql := `SELECT post_id,coalesce(post_username,'Unknown') as post_username,post_content FROM posts`
+	sql := `SELECT post_id,coalesce(post_username,'Unknown') as post_username,post_content,post_theme FROM posts`
 	var blogs []myTypes.Post
 	rows, _ := db.Query(context.Background(), sql)
 	defer rows.Close()
@@ -118,11 +118,12 @@ func ReturnPosts() ([]myTypes.Post, error) {
 }
 
 func NewPost(newContent myTypes.Post) error {
-	sql := `INSERT INTO posts (post_content,post_username) 
+	sql := `INSERT INTO posts (post_content,post_username,post_theme) 
 	Values ($1,$2)
 	RETURNING post_id`
 	var id int
-	err := db.QueryRow(context.Background(), sql, newContent.Post_Content, newContent.Post_Username).Scan(&id)
+	err := db.QueryRow(context.Background(), sql, newContent.Post_Content, newContent.Post_Username,
+		newContent.Post_Theme).Scan(&id)
 	if err != nil {
 		return fmt.Errorf("error creating task: %w", err)
 	}
@@ -132,7 +133,7 @@ func NewPost(newContent myTypes.Post) error {
 }
 
 func ReadPost(id int) (myTypes.Post, error) {
-	sql := `SELECT post_id,COALESCE(post_username,'Unknown') as post_username, post_content FROM posts WHERE post_id = $1`
+	sql := `SELECT post_id,COALESCE(post_username,'Unknown') as post_username, post_content,post_theme FROM posts WHERE post_id = $1`
 	rows, _ := db.Query(context.Background(), sql, id)
 	post, err := pgx.CollectExactlyOneRow(rows, pgx.RowToStructByName[myTypes.Post])
 	if err != nil {
@@ -177,7 +178,7 @@ func IncrementReplyLike(reply_id int) error {
 	WHERE reply_id = $1`
 	err := db.QueryRow(context.Background(), sql, reply_id)
 	if err != nil {
-		return fmt.Errorf("error creating task: %w", err)
+		return fmt.Errorf("error creating task: %+v", err)
 	}
 	return nil
 }

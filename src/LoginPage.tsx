@@ -14,7 +14,7 @@ import Stack from '@mui/material/Stack';
 import  Typography from '@mui/material/Typography';
 import Visibility from '@mui/icons-material/Visibility';
 import { LockOutline, VisibilityOff } from '@mui/icons-material';
-import { Avatar, Card, CardContent, Checkbox,FormControlLabel,Link} from '@mui/material';
+import { Avatar, Card, CardContent, Checkbox,CircularProgress,FormControlLabel,Link} from '@mui/material';
 import { FullwidthBox, FullwidthBoxCenter } from './MyFullwidthBox.tsx';
 export function LoginPage() {
   const usernameProps = useFormInput();
@@ -29,8 +29,12 @@ export function LoginPage() {
       type:""
     }
   );
+  //Img
+  const [load,setLoad] = useState<boolean>(false);
+  const [locationImg, setLocationImg] = useState(null);
   const [err,setErr] = useState<Error>();
   const navigate = useNavigate();
+  //Front end handling
   useEffect(
     ()=>{
       const handleStatus  = async()=>{
@@ -49,6 +53,7 @@ export function LoginPage() {
     ,[isLogin]);
   //Handle login
   const handleLogin = async()=>{
+    setLoad(true);
     try{
       const loginData = {
         username : usernameProps.value,
@@ -141,10 +146,10 @@ export function LoginPage() {
                 } required></Input>
               </FormControl>
           </Box>
-                     <Box
+            <Box
             sx={{
               display: "flex",
-              flexDirection: { xs: "column", sm: "row" }, // 👈 stack on mobile
+              flexDirection: { xs: "column", sm: "row" },
               alignItems: { sm: "center" },
               justifyContent: "space-between",
               mt: 1,
@@ -167,6 +172,9 @@ export function LoginPage() {
           </Box>     
           <Button fullWidth variant="contained"
           size="large" onClick = {handleLogin}>Sign in</Button>
+          <Activity mode = {load?'visible':'hidden'}>
+            <CircularProgress/>
+          </Activity>
           <Message type = {message.type} text={message.value} ></Message>
         </CardContent>
         </Card>

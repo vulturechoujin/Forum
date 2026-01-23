@@ -91,5 +91,5 @@ func VerifyUsers(ct *gin.Context) {
 }
 
 func LogOut(ct *gin.Context) {
-	ct.SetCookie("token", "", -1, "/", "localhost", false, true)
+	ct.SetCookie("token", "", -1, "/", "", false, true)
 }

@@ -25,7 +25,8 @@ export interface ErrorPageProps{
 export interface Post{
     Post_Id:number,
     Post_Content:string,
-    Post_Username:string
+    Post_Username:string,
+    Post_Theme:string
 }
 export interface Reply{
     Reply_Id:number,

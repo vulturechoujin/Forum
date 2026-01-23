@@ -52,7 +52,7 @@ export function BlogList() {
           }}>
             <IconAvatar username={post.Post_Username}/>
             <Typography variant="h4" sx={{textAlign:'center'}}>
-                My theme
+                {post.Post_Theme}
             </Typography>
             <Typography variant="body1">
                {post.Post_Content}
