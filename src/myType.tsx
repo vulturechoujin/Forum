@@ -13,6 +13,21 @@ declare global {
   const API_URL =  process.env.BUN_PUBLIC_BACKEND_URL;
   return API_URL
 }
+//Theme
+export const focusConfig = {
+  normal: {
+    autoFocus: false,
+    scroll: false,
+  },
+  error: {
+    autoFocus: true,
+    scroll: true,
+  },
+};
+//Props
+export interface TextFieldErrorProps{
+  mode:string
+}
 //INTERFACE
 export interface User{
     username:string,
@@ -26,7 +41,8 @@ export interface Post{
     Post_Id:number,
     Post_Content:string,
     Post_Username:string,
-    Post_Theme:string
+    Post_Theme:string,
+    Num_Likes:number
 }
 export interface Reply{
     Reply_Id:number,
@@ -39,7 +55,6 @@ export interface Note{
     value:string,
     type:string
 }
-//THEME 
 //Custom Hook
 export function useStatus(){
     const [username,setUsername] = useState<string>("");

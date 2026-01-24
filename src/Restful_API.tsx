@@ -85,7 +85,7 @@ export function GetPost(id:string){
     });
     return fetch(request); 
 }
-export function LikePost(){
+export function LikePost(post_id:number){
     const headers:Headers = new Headers();
     headers.set('Content-Type','application/json');
     headers.set('Accept','application/json');
@@ -93,7 +93,7 @@ export function LikePost(){
         method:'POST',
         credentials:'include',
         headers:headers,
-        body: JSON.stringify("")
+        body: JSON.stringify(post_id)
     });
     return fetch(request);
 }

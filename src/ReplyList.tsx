@@ -72,10 +72,10 @@ export function ReplyList({post_id}:{post_id:number}) {
       } 
     }
   return (
-    <React.Fragment>
+    <Box sx={{display:'flex',flexDirection:'column',gap:2,justifyContent:'center',alignItems:'center'}}>
       {replies.map((reply:Reply)=>
       (
-        <Box component="section" key={reply.Reply_Id}>
+        <Box key={reply.Reply_Id}>
           <ReplyComponent reply ={reply}/>
           <IconButton onClick={()=>onLikeReply(reply.Reply_Id)}>
             <ThumbUp color = "primary"/>
@@ -85,7 +85,7 @@ export function ReplyList({post_id}:{post_id:number}) {
           </Typography>
         </Box>
       ))}
-    </React.Fragment>
+    </Box>
   )
 };
 

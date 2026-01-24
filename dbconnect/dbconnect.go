@@ -105,7 +105,7 @@ func NewUser(newuser myTypes.User) error {
 
 // Post Table
 func ReturnPosts() ([]myTypes.Post, error) {
-	sql := `SELECT post_id,coalesce(post_username,'Unknown') as post_username,post_content,coalesce(post_theme,'My theme') as post_theme FROM posts`
+	sql := `SELECT post_id,COALESCE(post_username,'Unknown') as post_username,post_content,COALESCE(post_theme,'My theme') as post_theme,num_likes FROM posts`
 	var blogs []myTypes.Post
 	rows, _ := db.Query(context.Background(), sql)
 	defer rows.Close()
@@ -133,7 +133,7 @@ func NewPost(newContent myTypes.Post) error {
 }
 
 func ReadPost(id int) (myTypes.Post, error) {
-	sql := `SELECT post_id,COALESCE(post_username,'Unknown') as post_username, post_content,coalesce(post_theme) as post_theme FROM posts WHERE post_id = $1`
+	sql := `SELECT post_id,COALESCE(post_username,'Unknown') as post_username, post_content,COALESCE(post_theme,'My theme') as post_theme,num_likes FROM posts WHERE post_id = $1`
 	rows, _ := db.Query(context.Background(), sql, id)
 	post, err := pgx.CollectExactlyOneRow(rows, pgx.RowToStructByName[myTypes.Post])
 	if err != nil {
@@ -142,10 +142,21 @@ func ReadPost(id int) (myTypes.Post, error) {
 	return post, nil
 }
 
+func IncrementPostLike(post_id int) error {
+	sql := `UPDATE posts
+	SET num_likes = num_likes+1
+	WHERE post_id = $1`
+	err := db.QueryRow(context.Background(), sql, post_id)
+	if err != nil {
+		return fmt.Errorf("error creating task: %+v", err)
+	}
+	return nil
+}
+
 //Reply Table
 
 func ReturnReplies(id int) ([]myTypes.Reply, error) {
-	sql := `SELECT * FROM replies WHERE post_id = $1`
+	sql := `SELECT reply_id, post_id, num_likes, reply_content,reply_username FROM replies WHERE post_id = $1`
 	rows, _ := db.Query(context.Background(), sql, id)
 	defer rows.Close()
 	replies, err := pgx.CollectRows(rows, pgx.RowToStructByName[myTypes.Reply])

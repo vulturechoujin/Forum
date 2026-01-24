@@ -1,0 +1,1 @@
+ALTER TABLE posts ADD COLUMN num_likes INT DEFAULT 0;

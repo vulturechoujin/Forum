@@ -46,3 +46,19 @@ func GetPost(ct *gin.Context) {
 	}
 	// ct.JSON(http.StatusAccepted, "Hello")
 }
+
+func IncrementLike(ct *gin.Context) {
+	var post_id int
+	if err := ct.BindJSON(&post_id); err != nil {
+		ct.Error(err)
+		ct.JSON(http.StatusBadRequest, gin.H{
+			"error": "Please try again",
+		})
+		return
+	} else {
+		dbconnect.IncrementPostLike(post_id)
+		ct.JSON(http.StatusOK, gin.H{
+			"message": "Complete",
+		})
+	}
+}

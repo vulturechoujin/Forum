@@ -9,6 +9,7 @@ type Post struct {
 	Post_Username string `db:"post_username"`
 	Post_Content  string `db:"post_content"`
 	Post_Theme    string `db:"post_theme"`
+	Num_Likes     int    `db:"num_likes"`
 }
 type Reply struct {
 	Reply_Id       int    `db:"reply_id"`

@@ -69,7 +69,7 @@ func main() {
 	router.POST("/getposts", discussion.GetPost)
 	router.GET("/discussion", discussion.ReturnPosts)
 	router.POST("/createpost", discussion.AddPosts)
-
+	router.POST("/likepost", discussion.IncrementLike)
 	router.POST("/logout", account.LogOut)
 
 	router.POST("/createreply", reply.AddReplies)

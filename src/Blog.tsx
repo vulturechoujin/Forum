@@ -1,15 +1,16 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import { useNavigate, useParams } from 'react-router-dom'
 import { useAPI, useStatus, type Note, type Post, type Reply } from "./myType";
 import { AddReply, GetPost, LikePost } from "./Restful_API";
 import ReplyList from "./ReplyList";
-import { Avatar, Box, Button, IconButton, Stack, TextField, Typography } from "@mui/material";
+import { Avatar, Box, Button, Divider, IconButton, Stack, TextField, Typography } from "@mui/material";
 import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import { IconAvatar } from "./IconButton";
 import { ThumbUp } from "@mui/icons-material";
-import { FullwidthBox } from "./MyFullwidthBox";
+import { FullwidthBox, FullwidthBoxCenter } from "./MyFullwidthBox";
 import { captureException } from "@sentry/browser";
+import { BlogNotFound, ErrorPage } from "./ErrorPage";
 
 export function Blog() {
     //Declare hooks
@@ -27,8 +28,10 @@ export function Blog() {
     Post_Content:"",
     Post_Username:"",
     Post_Id:0,
-    Post_Theme:""
+    Post_Theme:"",
+    Num_Likes:0
   })
+  const [inputError,setinputError] = useState<Boolean>(false);
   const {id} = useParams();
   if(id === undefined){
     return <h2>Invalid</h2>
@@ -66,6 +69,12 @@ export function Blog() {
       navigate('/login');
     }
     const data = (document.getElementById('reply-box') as HTMLInputElement).value;
+    if(data==""){
+      setinputError(true);
+    }
+    else{
+      setinputError(false);
+    }
     try{
     let newComment:Reply = {
       Reply_Id:0,
@@ -95,8 +104,12 @@ export function Blog() {
      document.getElementById("reply-box")?.focus()
   }
   const onLikePost = async()=>{
+      setPost(prev=>{return {
+        ...prev,
+        Num_Likes:prev.Num_Likes+1,}}
+      )  
       try{
-      const result = await incrementexecute();
+      const result = await incrementexecute(post.Post_Id);
       let resultJSON;
       try{
       resultJSON = await result.json();
@@ -115,16 +128,16 @@ export function Blog() {
   }
   //RETURN 
   if(isErr){
-    return (<Box><Typography variant = "h5" color = "error">Something has happened. Please contact us</Typography></Box>)
+    return(<ErrorPage/>)
   }
   if(post.Post_Id===0){
-    return <h2>Blog not found</h2>
+    return (<BlogNotFound/>)
   }
   return (
     <FullwidthBox>
-      <Box>
-        <Box sx = {{display:'flex',justifyContent:'flex-start',justifyItems:'center',
-        flexDirection:'column',p:2,m:2,zIndex:10,borderRadius:2,bgcolor:'rgba(0, 0, 0, 0.04)',
+      <Box sx={{display:'flex',justifyContent:'center',justifyItems:'center',alignItems:'center'}}>
+        <Box sx = {{display:'flex',justifyContent:'flex-start',
+        flexDirection:'column',p:2,my:2,zIndex:10,borderRadius: 2,bgcolor:'rgba(0, 0, 0, 0.04)',
         width:{ 
           xs:'75%',
           sm:500,
@@ -133,28 +146,41 @@ export function Blog() {
         }}>
         <IconAvatar username={post.Post_Username}/>
         <Typography variant ="h5" sx={{fontWeight:'Bold',lineHeight:1.4,margin:'auto'}}>
-            My theme
+            {post.Post_Theme}
         </Typography> 
         <Typography variant = "body2">
           {post.Post_Content}
         </Typography>
+            <Box sx={{display:'flex',flexDirection:'row',ml:'auto',alignItems:'center '}}>
+              <IconButton name="chat-bubble" onClick = {navigateFocus}>
+                <ChatBubbleIcon color="primary"/>
+              </IconButton>
+              <IconButton onClick={onLikePost} >
+                <ThumbUpIcon color = "primary"/>
+              </IconButton>
+              <Typography sx={{display:"inline-block",fontWeight:'fontWeightBold'}}>{post.Num_Likes}</Typography>
+          </Box>
         </Box>
-        <Stack direction="row">
-            <IconButton name="chat-bubble" onClick = {navigateFocus}>
-              <ChatBubbleIcon color="primary"/>
-            </IconButton>
-            <IconButton onClick={onLikePost}>
-              <ThumbUpIcon color = "primary"/>
-            </IconButton>
-        </Stack>
       </Box>
       <Box>
-        <TextField label="reply-textbox" placeholder="Please type your reply here" multiline minRows={4} maxRows={12}
-        fullWidth variant="outlined" tabIndex = {-1} id ="reply-box"/>
-        <Button onClick={CreateComment}>
-          Add
-        </Button> 
-        <ReplyList post_id ={post.Post_Id}/>
+      <Box sx={{display:'flex',flexDirection:'column'}}>
+          <TextField label="reply-textbox" placeholder="Please type your reply here" 
+          multiline minRows={4} maxRows={12}
+          fullWidth variant="outlined" tabIndex = {-1} id ="reply-box"
+            helperText={inputError ? "Title is required" : ""}
+           />
+      <Button onClick={CreateComment} sx={{
+        width:{
+          xs:'auto',
+          sm:'100%',
+          md:'50%'
+        },my:1,mx:'auto'
+      }}>
+        Add
+      </Button>
+      </Box>
+      <Divider/>
+      <ReplyList post_id ={post.Post_Id}/>
       </Box>
     </FullwidthBox>
   )

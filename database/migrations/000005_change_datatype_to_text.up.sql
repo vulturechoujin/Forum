@@ -1,0 +1,3 @@
+ALTER TABLE posts 
+ALTER COLUMN post_content TYPE TEXT,
+ALTER COLUMN post_theme TYPE TEXT;

@@ -34,7 +34,6 @@ func AddReplies(ct *gin.Context) {
 		})
 		return
 	} else {
-		fmt.Printf("%+v", newContent)
 		dbconnect.NewReply(newContent)
 		ct.JSON(http.StatusOK, gin.H{
 			"message": "Complete",
