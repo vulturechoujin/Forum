@@ -66,8 +66,6 @@ func VerifyUsers(ct *gin.Context) {
 		return
 	}
 	if username == "" {
-		fmt.Println("????????")
-		// _ = ct.Error()
 		return
 	}
 	if username == Credentials.Username && CheckPassword(password, Credentials.Password) {
@@ -76,7 +74,6 @@ func VerifyUsers(ct *gin.Context) {
 			_ = ct.Error(err2)
 			return
 		}
-		fmt.Printf("%s\n", tokenString)
 		ct.SetCookie("token", tokenString, 3600, "/", "https://forum-tngg.onrender.com", true, true)
 		ct.JSON(http.StatusAccepted, gin.H{
 			"message": "Login Successfully",

@@ -5,10 +5,12 @@ import (
 
 	// "time"
 
+	caching "forum/backend/Caching"
 	"forum/backend/account"
 	"forum/backend/custom_error"
 	dbconnect "forum/backend/dbconnect"
 	"log"
+	"net/http"
 	"os"
 	"time"
 
@@ -61,19 +63,25 @@ func main() {
 		WaitForDelivery: false,
 		Timeout:         5 * time.Second,
 	}))
+	router.Use(caching.HttpEtagCache(3600))
 	router.Use(custom_error.ErrorHandler())
 	router.SetTrustedProxies([]string{"127.0.0.1:" + port})
+	router.GET("/", func(ct *gin.Context) {
+		ct.JSON(http.StatusAccepted, "something")
+	})
+	//Cookies
 	router.POST("/users", account.AddUsers)
 	router.POST("/login", account.VerifyUsers)
 	router.POST("/cookies", session.AuthenticateMiddleware)
-	router.POST("/getposts", discussion.GetPost)
+	//Post
+	router.GET("/getpost/:post_id", discussion.GetPost)
 	router.GET("/discussion", discussion.ReturnPosts)
 	router.POST("/createpost", discussion.AddPosts)
 	router.POST("/likepost", discussion.IncrementLike)
 	router.POST("/logout", account.LogOut)
-
+	//Reply
 	router.POST("/createreply", reply.AddReplies)
-	router.POST("/getreplies", reply.ReturnReplies)
+	router.GET("/getreplies/:post_id", reply.ReturnReplies)
 	router.POST("/likereply", reply.IncrementLike)
 	router.Run(":" + port)
 }

@@ -78,10 +78,10 @@ export function GetPost(id:string){
     const headers:Headers = new Headers();
     headers.set('Content-Type','application/json');
     headers.set('Accept','application/json');
-    const request: RequestInfo = new Request(`${API_URL}/getposts`,{
-        method:'POST',
+    headers.set('X-Custom-Header', 'CustomValue');
+    const request: RequestInfo = new Request(`${API_URL}/getpost/${id}`,{
+        method:'GET',
         headers:headers,
-        body: JSON.stringify(parseInt(id))
     });
     return fetch(request); 
 }
@@ -129,10 +129,10 @@ export function RenderReplies(id:number){
     const headers: Headers = new Headers();
     headers.set('Content-Type','application/json');
     headers.set('Accept','application/json');
-    const request: RequestInfo = new Request(`${API_URL}/getreplies`,{
-        method:'POST',
+    headers.set('X-Custom-Header', 'CustomValue');
+    const request: RequestInfo = new Request(`${API_URL}/getreplies/${id}`,{
+        method:'GET',
         headers:headers,
-        body:JSON.stringify(id)
     });
     return fetch(request);
 }

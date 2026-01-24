@@ -15,7 +15,10 @@ export function Navbar() {
     navigate('../login');
   }
   const navigateCreate = ()=>{
-    navigate('./create')
+    if(!isLogin){
+      navigate('./login');
+    }
+    navigate('./create');
   }
   useEffect(
     ()=>{

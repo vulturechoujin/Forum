@@ -33,13 +33,13 @@ export function CreatePage() {
   const CreatePost = async()=>{
       const data1 = (document.getElementById('create-content') as HTMLInputElement).value;
       const data2 = (document.getElementById('create-theme') as HTMLInputElement).value;
-      console.log(data);
       try{
       let newPost:Post = {
         Post_Id:0,
         Post_Content:data1,
         Post_Username:username,
-        Post_Theme:data2
+        Post_Theme:data2,
+        Num_Likes:0
       }
       const result = await execute(newPost);
       let resultJSON;

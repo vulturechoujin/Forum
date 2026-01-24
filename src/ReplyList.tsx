@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react"
+import React, { Activity, useEffect, useState } from "react"
 import { useAPI, type Note, type Reply } from "./myType";
 import { LikeReply, RenderReplies } from "./Restful_API";
 import { ReplyComponent } from "./ReplyComponent";
 import { useNavigate } from "react-router-dom";
-import { Box, IconButton, Typography } from "@mui/material";
+import { Box, CircularProgress, IconButton, Typography } from "@mui/material";
 import { ThumbUp } from "@mui/icons-material";
 import { captureException } from "@sentry/browser";
 
@@ -11,22 +11,24 @@ export function ReplyList({post_id}:{post_id:number}) {
   const [data,execute] = useAPI(RenderReplies)
   const [likedata,incrementexecute] = useAPI(LikeReply)
   const [replies,setReplies] = useState<Reply[]>([]);
+  const [loading,setLoading] = useState(true);
   const [message,setMessage] = useState<Note>(
     {
       value:"",type:"",
     }
   )
   const [isErr,setisErr] = useState<Boolean>(false);
-  useEffect(()=>{
-    const handleList = async()=>{
-      try{
+    useEffect(()=>{
+    const intervalId =setInterval(async()=>{
+        try{
         const result = await execute(post_id);
         let resultJSON;
         try{
-        resultJSON = await result.json();
+          resultJSON = await result.json();
         }catch(err){
           throw new Error("Invalid server response");
         }
+        setLoading(false);
         setReplies(resultJSON);
         if(result.ok){
           setMessage({
@@ -44,8 +46,8 @@ export function ReplyList({post_id}:{post_id:number}) {
           captureException(e);
           setisErr(true);
       }
-    }
-    handleList(); 
+    },5000);
+    return () => clearInterval(intervalId);
   },[])
   const onLikeReply= async (Reply_Id:number)=>{
       setReplies(prev=>prev.map(r=>
@@ -73,6 +75,9 @@ export function ReplyList({post_id}:{post_id:number}) {
     }
   return (
     <Box sx={{display:'flex',flexDirection:'column',gap:2,justifyContent:'center',alignItems:'center'}}>
+        <Activity mode={loading?'visible':'hidden'}>          
+          <CircularProgress/>
+        </Activity>
       {replies.map((reply:Reply)=>
       (
         <Box key={reply.Reply_Id}>

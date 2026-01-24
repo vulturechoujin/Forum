@@ -6,6 +6,7 @@ import (
 	"forum/backend/dbconnect"
 	"forum/backend/myTypes"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -20,7 +21,6 @@ func ReturnPosts(ct *gin.Context) {
 }
 
 func AddPosts(ct *gin.Context) {
-	// fmt.Println(ct.Request.Method)
 	var newContent myTypes.Post
 	if err := ct.BindJSON(&newContent); err != nil {
 		ct.Error(err)
@@ -32,20 +32,20 @@ func AddPosts(ct *gin.Context) {
 }
 
 func GetPost(ct *gin.Context) {
-	var id int
-	if err := ct.BindJSON(&id); err != nil {
-		ct.Error(err)
+	id, err1 := strconv.Atoi(ct.Param("post_id"))
+	if err1 != nil {
+		ct.Error(err1)
 		return
-	} else {
-		post, err := dbconnect.ReadPost(id)
-		if err != nil {
-			ct.Error(err)
-			return
-		}
-		ct.JSON(http.StatusAccepted, post)
 	}
-	// ct.JSON(http.StatusAccepted, "Hello")
+	post, err2 := dbconnect.ReadPost(id)
+	if err2 != nil {
+		ct.Error(err2)
+		return
+	}
+	ct.JSON(http.StatusAccepted, post)
 }
+
+// ct.JSON(http.StatusAccepted, "Hello")
 
 func IncrementLike(ct *gin.Context) {
 	var post_id int

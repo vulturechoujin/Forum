@@ -14,7 +14,6 @@ export function BlogList() {
     try{
       const response = await RenderPost();
       const Posts = await response.json();
-      console.log(Posts);
       setPosts(Posts);    
       // console.log(Posts);
     }      

@@ -3,7 +3,8 @@ import Box  from "@mui/material/Box";
 export function FullwidthBox({children}:PropsWithChildren) {
   return (
     <Box sx={{width:'100vw', height: '100vh', display: 'flex',
-         flexDirection: 'column',p:1,backgroundColor:"grey.100",
+        flexDirection: 'column',p:1,backgroundColor:"grey.100",
+        overflow:'auto'
     }}>
         {children}
     </Box>  
@@ -16,10 +17,11 @@ export function FullwidthBoxCenter({children}:PropsWithChildren) {
     width: '100vw',
     height: '100vh',
     display: 'flex',
-    justifyContent: 'center', // horizontal centering
-    alignItems: 'center',     // vertical centering
+    justifyContent: 'center', 
+    alignItems: 'center',
     backgroundColor: "grey.100",
-    p: 1,                     // optional padding
+    overflow:'auto',
+    p: 1,              
   }}>
 {children}
 </Box>

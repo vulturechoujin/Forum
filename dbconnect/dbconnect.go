@@ -119,16 +119,15 @@ func ReturnPosts() ([]myTypes.Post, error) {
 
 func NewPost(newContent myTypes.Post) error {
 	sql := `INSERT INTO posts (post_content,post_username,post_theme) 
-	Values ($1,$2)
+	VALUES ($1,$2,$3)
 	RETURNING post_id`
 	var id int
 	err := db.QueryRow(context.Background(), sql, newContent.Post_Content, newContent.Post_Username,
 		newContent.Post_Theme).Scan(&id)
+	log.Printf("%+v\n", err)
 	if err != nil {
 		return fmt.Errorf("error creating task: %w", err)
 	}
-	// fmt.Printf("Success")
-	fmt.Printf("Created task with ID %d\n", id)
 	return nil
 }
 

@@ -5,16 +5,15 @@ import (
 	"forum/backend/dbconnect"
 	"forum/backend/myTypes"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
 
 func ReturnReplies(ct *gin.Context) {
-	var id int
-	if err1 := ct.BindJSON(&id); err1 != nil {
-		ct.JSON(http.StatusBadRequest, gin.H{"error": "Error, please reload the page"})
+	id, err1 := strconv.Atoi(ct.Param("post_id"))
+	if err1 != nil {
 		ct.Error(err1)
-		return
 	}
 	posts, err2 := dbconnect.ReturnReplies(id)
 	if err2 != nil {

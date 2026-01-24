@@ -180,7 +180,7 @@ export function Blog() {
       </Button>
       </Box>
       <Divider/>
-      <ReplyList post_id ={post.Post_Id}/>
+      <ReplyList post_id = {post.Post_Id}/>
       </Box>
     </FullwidthBox>
   )

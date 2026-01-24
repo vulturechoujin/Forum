@@ -24,10 +24,6 @@ export const focusConfig = {
     scroll: true,
   },
 };
-//Props
-export interface TextFieldErrorProps{
-  mode:string
-}
 //INTERFACE
 export interface User{
     username:string,
@@ -114,4 +110,3 @@ export function useAPI<Targs extends any[],TResult>(asyncFn:(...args:Targs)=>Pro
 [])
   return [data,execute] as const;
 }
-

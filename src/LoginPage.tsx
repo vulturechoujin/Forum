@@ -174,7 +174,7 @@ export function LoginPage() {
           <Button fullWidth variant="contained"
           size="large" onClick = {handleLogin}>Sign in</Button>
           <Activity mode = {load?'visible':'hidden'}>
-            <CircularProgress/>
+            <CircularProgress sx={{m:1}}/>
           </Activity>
           <Message type = {message.type} text={message.value} ></Message>
         </CardContent>

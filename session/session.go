@@ -24,7 +24,6 @@ func CreateToken(username string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	// fmt.Printf("%+v\n", claims)
 	return tokenString, nil
 }
 func VerifyToken(tokenString string) (*jwt.Token, error) {
@@ -35,7 +34,6 @@ func VerifyToken(tokenString string) (*jwt.Token, error) {
 		return secretKey, nil
 	})
 	if err != nil {
-		// fmt.Println("Error parsing token: ", err)
 		return nil, err
 	}
 	if !token.Valid {
@@ -45,15 +43,12 @@ func VerifyToken(tokenString string) (*jwt.Token, error) {
 }
 func AuthenticateMiddleware(ct *gin.Context) {
 	tokenString, err := ct.Cookie("token")
-	fmt.Println(tokenString)
 	if err != nil {
-		fmt.Println("missing")
 		ct.Error(&custom_error.UserError{
 			StatusCode: http.StatusUnauthorized,
 			Type:       "INVALID_COOKIES",
 			Message:    "Not Login",
 		})
-		// ct.Redirect(http.StatusSeeOther, "/login")
 		ct.Abort()
 		return
 	}
@@ -61,11 +56,9 @@ func AuthenticateMiddleware(ct *gin.Context) {
 	if err != nil {
 		fmt.Printf("%+v\n", err)
 		ct.Error(err)
-		// ct.Redirect(http.StatusSeeOther, "/login")
 		ct.Abort()
 		return
 	}
-	fmt.Println(token.Claims)
 	username, err := token.Claims.GetSubject()
 	ct.JSON(http.StatusOK, username)
 }
