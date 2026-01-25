@@ -23,3 +23,17 @@ This project is a full-stack forum application with the following stack:
 - frontend/# React frontend using Bun
 - backend/# Golang backend using Gin framework
 - database/    # PostgreSQL schema & migrations
+
+---
+## AI Declaration
+- Researching methods to store JWT tokens in the browser using the Gin framework.
+
+- Understanding functions, for example setCookies() alongside the meaning of their parameers.
+
+- Fixing errors in code, such as attaching ETags or tracking down invisible bugs (though sometimes AI suggestions weren’t much help).
+
+- Creating a frontend design to follow, since styling isn’t my strong point.
+
+- Writing the report clearly and documenting it, including declaring AI usage and other relevant notes.
+
+- Researching routing, HTTP, APIs, logging errors in production, and comparing databases such as MySQL and PostgreSQL.
