@@ -36,4 +36,4 @@ This project is a full-stack forum application with the following stack:
 
 - Writing the report clearly and documenting it, including declaring AI usage and other relevant notes.
 
-- Researching routing, HTTP, APIs, logging errors in production, and comparing databases such as MySQL and PostgreSQL.
+- Researching routing, HTTP, APIs, logging errors in production, deploying the website and comparing databases such as MySQL and PostgreSQL.
