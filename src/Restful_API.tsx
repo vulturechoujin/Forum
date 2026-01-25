@@ -1,7 +1,6 @@
 import React,{useState} from 'react';
-import {GetAPIURL, type Post, type Reply, type User } from './myType';
-const API_URL = GetAPIURL();
-//user
+import {type Post, type Reply, type User } from './myType';
+const API_URL = process.env.BUN_PUBLIC_BACKEND_URL??"localhost:8000";
 export function AddUser(user:User){
     const headers:Headers = new Headers();
     headers.set('Content-Type','application/json');
@@ -28,19 +27,20 @@ export function VerifyUser(user:User){
 }
 
 //Post
-export function RenderPost(){
+export function RenderPost(topic:string){
+    console.log(topic);
     const headers: Headers = new Headers();
     headers.set('Content-Type','application/json');
     headers.set('Accept','application/json');
     headers.set('X-Custom-Header', 'CustomValue');
-
-    const request: RequestInfo = new Request(`${API_URL}/discussion`,{
+    const request: RequestInfo = new Request(`${API_URL}/discussion/${topic}`,{
         method:'GET',
         headers:headers
     });
     return fetch(request);
 }
 export function AddPost(data:Post){
+    console.log(data);
     const headers:Headers = new Headers();
     headers.set('Content-Type','application/json');
     headers.set('Accept','application/json');

@@ -1,21 +1,17 @@
 package main
 
 import (
-	// "errors"
-
-	// "time"
-
 	caching "forum/backend/Caching"
 	"forum/backend/account"
 	"forum/backend/custom_error"
 	dbconnect "forum/backend/dbconnect"
+	"forum/backend/reply"
 	"log"
 	"net/http"
 	"os"
 	"time"
 
 	"forum/backend/discussion"
-	"forum/backend/reply"
 	"forum/backend/session"
 
 	"github.com/getsentry/sentry-go"
@@ -63,22 +59,21 @@ func main() {
 		WaitForDelivery: false,
 		Timeout:         5 * time.Second,
 	}))
-	router.Use(caching.HttpEtagCache(3600))
 	router.Use(custom_error.ErrorHandler())
 	router.SetTrustedProxies([]string{"127.0.0.1:" + port})
-	router.GET("/", func(ct *gin.Context) {
-		ct.JSON(http.StatusAccepted, "something")
+	router.GET("/", caching.HttpEtagCache(60), func(ct *gin.Context) {
+		ct.JSON(http.StatusOK, gin.H{"message": "something"})
 	})
 	//Cookies
 	router.POST("/users", account.AddUsers)
 	router.POST("/login", account.VerifyUsers)
+	router.POST("/logout", account.LogOut)
 	router.POST("/cookies", session.AuthenticateMiddleware)
 	//Post
 	router.GET("/getpost/:post_id", discussion.GetPost)
-	router.GET("/discussion", discussion.ReturnPosts)
+	router.GET("/discussion/:my_topic", discussion.ReturnPosts)
 	router.POST("/createpost", discussion.AddPosts)
 	router.POST("/likepost", discussion.IncrementLike)
-	router.POST("/logout", account.LogOut)
 	//Reply
 	router.POST("/createreply", reply.AddReplies)
 	router.GET("/getreplies/:post_id", reply.ReturnReplies)

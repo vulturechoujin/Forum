@@ -3,16 +3,13 @@ import { CheckToken, LogOut } from './Restful_API';
 import { useNavigate } from 'react-router-dom';
 import { setUser } from '@sentry/browser';
 import { createTheme } from '@mui/material';
-declare global {
-  namespace NodeJS {
-    interface ProcessEnv {
-      API_URL: string;
-    }
-  }
-}export function GetAPIURL(){
-  const API_URL =  process.env.BUN_PUBLIC_BACKEND_URL;
-  return API_URL
-}
+// declare global {
+//   namespace NodeJS {
+//     interface ProcessEnv {
+//       API_URL: string;
+//     }
+//   }
+// }
 //Theme
 export const focusConfig = {
   normal: {
@@ -38,6 +35,7 @@ export interface Post{
     Post_Content:string,
     Post_Username:string,
     Post_Theme:string,
+    Post_Topic:string,
     Num_Likes:number
 }
 export interface Reply{
@@ -51,6 +49,9 @@ export interface Note{
     value:string,
     type:string
 }
+
+export const list_topics=["movie","comic","manga",
+  ,"lightnovel","novel"]
 //Custom Hook
 export function useStatus(){
     const [username,setUsername] = useState<string>("");

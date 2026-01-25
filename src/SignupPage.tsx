@@ -5,7 +5,6 @@ import { Form, useNavigate } from "react-router-dom";
 import Message from './Message.tsx';
 import  Box  from '@mui/material/Box';
 import  Typography  from '@mui/material/Typography';
-import Stack from '@mui/material/Stack'
 import InputLabel from '@mui/material/InputLabel'
 import FormControl from '@mui/material/FormControl'
 import Input from '@mui/material/Input'
@@ -14,11 +13,9 @@ import IconButton from '@mui/material/IconButton';
 import Button from '@mui/material/Button'
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff  from '@mui/icons-material/VisibilityOff';
-import { FullwidthBoxCenter } from './MyFullwidthBox.tsx';
-import Navbar from './Navbar.tsx';
+import { FullwidthBoxCenter } from './StyledComponents.tsx';
 import LockOutlineIcon from '@mui/icons-material/LockOutline';
 import { Avatar, Card, CardContent, Checkbox, Divider, FormControlLabel, Link } from '@mui/material';
-import { CheckBox, CheckBoxOutlineBlank, type BorderColor } from '@mui/icons-material';
 import { captureException } from '@sentry/browser';
 
 export function SignupPage() {
@@ -146,21 +143,22 @@ export function SignupPage() {
           </Box>
           <Button fullWidth variant="contained"
           size="large" onClick = {handleCreate}>Create Account</Button>
-                    <Box sx={{ display: "flex", alignItems: "center", my: 2 }}>
+            <Box sx={{ display: "flex", alignItems: "center", my: 2 }}>
             <Divider sx={{ flex: 1 }} />
             <Typography sx={{ mx: 2 }} color="text.secondary">
               OR
             </Typography>
             <Divider sx={{ flex: 1 }} />
           </Box>
-          <Typography align="center" variant="body2">
-           Sign up with gmail
-          </Typography>
+          <Box sx={{display:'flex',justifyContent:'center',alignItems:'center'}}>
+          <Link href="/login" underline="none">
+              Login
+          </Link>
+          </Box>
           <Message type = {message.type} text={message.value} ></Message>
         </CardContent>
     </Card>
     </FullwidthBoxCenter>
-    // </ThemeProvider>
   );
 }
 

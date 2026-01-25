@@ -12,8 +12,8 @@ import Blog from "./Blog";
 import SignupPage from "./SignupPage";
 import LoginPage from "./LoginPage";
 import { ThemeProvider } from "@emotion/react";
-import Something from "./something";
 import * as Sentry from "@sentry/react";
+import TopicDiscussion from "./TopicDiscussion";
 // const theme = {
 //   palette:{
 //     mode:"light",
@@ -28,12 +28,12 @@ export function App() {
     // <button> My...</button>
   <Router>
     <Routes>
-      <Route path = "/" element = {<SignupPage/>}/>
-      <Route path = "/discussion" element = {<Discussion/>}/>
-      <Route path = "/discussion/create" element = {<CreatePage/>}/>
-      <Route path = "/discussion/post/:id" element = {<Blog/>}/>
+      <Route path = "/signup" element = {<SignupPage/>}/>
+      <Route path = "/" element = {<Discussion/>}/>
+      <Route path = "/:topic" element = {<TopicDiscussion/>}/>
+      <Route path = "/:topic/create" element = {<CreatePage/>}/>
+      <Route path = "/:topic/:post_id" element = {<Blog/>}/>
       <Route path = "/login" element = {<LoginPage/>}/>
-      <Route path = "/test" element = {<Something/>}/>
     </Routes>
   </Router>
   )

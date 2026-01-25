@@ -1,12 +1,13 @@
 import React,{useState,useEffect} from "react"
 import { AddPost, CheckToken } from "./Restful_API";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useAPI, useStatus, type Note, type Post } from "./myType";
 import { Box, Button, Divider, TextField, Typography } from "@mui/material";
 import Message from "./Message";
 import Navbar from "./Navbar";
-import { FullwidthBox} from "./MyFullwidthBox";
+import { FullwidthBox} from "./StyledComponents";
 import { captureException } from "@sentry/browser";
+import { BlogNotFound } from "./ErrorPage";
 export function CreatePage() {
   const [message,setMessage] = useState<Note>({
     value:"",
@@ -17,6 +18,15 @@ export function CreatePage() {
   const [data,execute] = useAPI(AddPost); 
   const [username,isLogin,fetchData] = useStatus();
   const [isErr,setisErr] = useState<Boolean>(false);
+  const params = useParams();
+  const topic = params.topic;
+  if(!isLogin){
+    navigate('/login');
+  }
+  if(!topic){
+    setTimeout(()=>navigate("/"),1000);
+    return <BlogNotFound/>
+  }
   useEffect(
     ()=>{
       const handleStatus  = async()=>{
@@ -39,6 +49,7 @@ export function CreatePage() {
         Post_Content:data1,
         Post_Username:username,
         Post_Theme:data2,
+        Post_Topic:topic,
         Num_Likes:0
       }
       const result = await execute(newPost);
@@ -54,7 +65,7 @@ export function CreatePage() {
           type:"success",
         })
         setTimeout(()=>{
-          navigate('/discussion');
+          navigate('/');
         },1000);      
       }
       else{
@@ -73,7 +84,7 @@ export function CreatePage() {
   }
     return (
       <FullwidthBox>
-        <Navbar/>
+        <Navbar hidButton/>
         <Box sx={{width:'inherit',height:'inherit',
           backgroundColor:'white',
           display:'flex',

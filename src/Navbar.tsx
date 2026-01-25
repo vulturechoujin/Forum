@@ -6,14 +6,13 @@ import { AppBar, Avatar, Box, Button, IconButton, Toolbar, Typography } from "@m
 import { StickyNote2 } from "@mui/icons-material";
 import AddIcon from '@mui/icons-material/Add';
 import { captureException } from "@sentry/browser";
-export function Navbar() {
+import { styled } from "@mui/material/styles";
+export function Navbar({hidButton}:{hidButton:boolean}) {
+  //Hook
   const [username,isLogin,fetchData] = useStatus();
   const [data,execute] = useAPI(LogOut);
   const [isErr,setisErr] = useState<Boolean>(false);
   const navigate = useNavigate();
-  const navigateLogin = ()=>{
-    navigate('../login');
-  }
   const navigateCreate = ()=>{
     if(!isLogin){
       navigate('./login');
@@ -60,7 +59,7 @@ export function Navbar() {
         <Button onClick={navigateCreate}
             startIcon={<AddIcon/>}
             sx={{
-              display: { xs: "none", sm: "inline-flex" },
+              display:hidButton?'none':'inline-flex',
             }}
           >
             Add Post
@@ -114,7 +113,7 @@ export function Navbar() {
       <Activity mode = {isLogin?'hidden':'visible'}>
         <Button
           variant="contained"
-          onClick={navigateLogin}
+          onClick={()=>navigate('/login')}
           sx={{
             borderRadius: 2,
             textTransform: 'none',
@@ -122,6 +121,17 @@ export function Navbar() {
           }}
         >
           Login
+        </Button>
+        <Button
+          variant="contained"
+          onClick={()=>navigate('/signup')}
+          sx={{
+            borderRadius: 2,
+            textTransform: 'none',
+            fontWeight: 600,
+          }}
+        >
+          Signup
         </Button>
       </Activity>
     </Box>

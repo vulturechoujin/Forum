@@ -14,30 +14,37 @@ type responseBodyWriter struct {
 	body *bytes.Buffer
 }
 
+// Override WriteHeader so the inner handler (ct.JSON)
+// doesn't actually send the 200 OK yet.
+func (w *responseBodyWriter) WriteHeader(code int) {
+	// Do nothing here! We will call the REAL WriteHeader in the middleware.
+}
+
 func (w *responseBodyWriter) Write(b []byte) (int, error) {
 	return w.body.Write(b)
 }
+
 func HttpEtagCache(maxAge uint) gin.HandlerFunc {
 	return func(ct *gin.Context) {
-		// wrap the original writer
+		originalWriter := ct.Writer
 		w := &responseBodyWriter{
-			ResponseWriter: ct.Writer,
+			ResponseWriter: originalWriter,
 			body:           &bytes.Buffer{},
 		}
 		ct.Writer = w
+
 		ct.Next()
-		body := w.body.Bytes()
-		h := sha1.New()
-		etag := fmt.Sprintf(`W/"%x"`, h.Sum(nil))
+
+		etag := fmt.Sprintf(`W/"%x"`, sha1.Sum(w.body.Bytes()))
+
+		if ct.GetHeader("If-None-Match") == etag {
+			originalWriter.WriteHeader(http.StatusNotModified)
+			return
+		}
+		// If no match, set headers and write the actual 200 status + body
 		ct.Header("ETag", etag)
 		ct.Header("Cache-Control", fmt.Sprintf("public, max-age=%d", maxAge))
-		fmt.Println(etag)
-		if match := ct.GetHeader("If-None-Match"); match != "" {
-			if match == etag {
-				ct.Status(http.StatusNotModified)
-				return
-			}
-		}
-		w.ResponseWriter.Write(body)
+		originalWriter.WriteHeader(ct.Writer.Status())
+		originalWriter.Write(w.body.Bytes())
 	}
 }

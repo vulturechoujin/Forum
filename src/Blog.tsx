@@ -8,9 +8,10 @@ import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import { IconAvatar } from "./IconButton";
 import { ThumbUp } from "@mui/icons-material";
-import { FullwidthBox, FullwidthBoxCenter } from "./MyFullwidthBox";
+import { FullwidthBox, FullwidthBoxCenter } from "./StyledComponents";
 import { captureException } from "@sentry/browser";
 import { BlogNotFound, ErrorPage } from "./ErrorPage";
+import Navbar from "./Navbar";
 
 export function Blog() {
     //Declare hooks
@@ -20,19 +21,17 @@ export function Blog() {
   const [likedata,incrementexecute] = useAPI(LikePost)
   const [isErr,setisErr] = useState<Boolean>(false);
   const navigate = useNavigate();
-  const [message,setMessage] = useState<Note>({
-    value:"",
-    type:"" 
-  })
   const [post,setPost] = useState<Post>({
     Post_Content:"",
     Post_Username:"",
     Post_Id:0,
     Post_Theme:"",
+    Post_Topic:"",
     Num_Likes:0
   })
   const [inputError,setinputError] = useState<Boolean>(false);
-  const {id} = useParams();
+  const params= useParams();
+  const id = params.post_id;
   if(id === undefined){
     return <h2>Invalid</h2>
   }
@@ -50,12 +49,7 @@ export function Blog() {
           }catch(err){
             throw new Error("Invalid server response");
           }
-          if(!result.ok){
-            setMessage({
-              value:resultJSON.error,
-              type:"error",
-            })
-          }
+          console.log(resultJSON);
         }catch(err:unknown){
           captureException(err);
           setisErr(true);
@@ -90,12 +84,8 @@ export function Blog() {
       }catch(err){
         throw new Error("Invalid server response");
       }
-      if(!result.ok){
-        setMessage({
-          value:resultJSON.error,
-          type:"error",
-        })
-      }
+      const box = document.getElementById('reply-box') as HTMLInputElement;
+      box.value = ""
     }catch(e){
       captureException(e);
     }
@@ -116,12 +106,6 @@ export function Blog() {
       }catch(err){
         throw new Error("Invalid server response");
       }
-      if(!result.ok){
-        setMessage({
-          value:resultJSON.error,
-          type:"error",
-        })
-      }
     }catch(e){
       captureException(e);
     }
@@ -135,6 +119,7 @@ export function Blog() {
   }
   return (
     <FullwidthBox>
+      <Navbar hidButton = {true}/>
       <Box sx={{display:'flex',justifyContent:'center',justifyItems:'center',alignItems:'center'}}>
         <Box sx = {{display:'flex',justifyContent:'flex-start',
         flexDirection:'column',p:2,my:2,zIndex:10,borderRadius: 2,bgcolor:'rgba(0, 0, 0, 0.04)',

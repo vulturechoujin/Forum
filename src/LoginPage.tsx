@@ -15,7 +15,7 @@ import  Typography from '@mui/material/Typography';
 import Visibility from '@mui/icons-material/Visibility';
 import { LockOutline, VisibilityOff } from '@mui/icons-material';
 import { Avatar, Card, CardContent, Checkbox,CircularProgress,FormControlLabel,Link} from '@mui/material';
-import { FullwidthBox, FullwidthBoxCenter } from './MyFullwidthBox.tsx';
+import { FullwidthBox, FullwidthBoxCenter } from './StyledComponents.tsx';
 import { captureException } from '@sentry/browser';
 export function LoginPage() {
   const usernameProps = useFormInput();
@@ -32,7 +32,6 @@ export function LoginPage() {
   );
   //Img
   const [load,setLoad] = useState<boolean>(false);
-  const [locationImg, setLocationImg] = useState(null);
   const [isErr,setisErr] = useState<Boolean>(false);
   const navigate = useNavigate();
   //Front end handling
@@ -48,7 +47,7 @@ export function LoginPage() {
       }
       handleStatus();
       if(isLogin){
-        navigate('/discussion');
+        navigate('/');
       }
     }
     ,[isLogin]);
@@ -58,7 +57,8 @@ export function LoginPage() {
     try{
       const loginData = {
         username : usernameProps.value,
-        password : passwordProps.value
+        password : passwordProps.value,
+        remember: checked
       };
       const result = await execute(loginData);
       let resultJSON;
@@ -73,7 +73,7 @@ export function LoginPage() {
           type:"success",
         })
         setTimeout(()=>{
-          navigate('/discussion');
+          navigate('/');
         },100);      
       }
       else{
@@ -167,8 +167,8 @@ export function LoginPage() {
           />  }
               label="Remember me"
             />    
-            <Link href="#" underline="none">
-              Forgot password?
+            <Link href="/signup" underline="none">
+              Sign up
             </Link>
           </Box>     
           <Button fullWidth variant="contained"

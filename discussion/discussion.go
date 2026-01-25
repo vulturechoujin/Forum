@@ -3,6 +3,7 @@ package discussion
 import (
 	// "fmt"
 
+	"fmt"
 	"forum/backend/dbconnect"
 	"forum/backend/myTypes"
 	"net/http"
@@ -12,7 +13,8 @@ import (
 )
 
 func ReturnPosts(ct *gin.Context) {
-	posts, err := dbconnect.ReturnPosts()
+	topic := ct.Param("my_topic")
+	posts, err := dbconnect.ReturnPosts(topic)
 	if err != nil {
 		ct.Error(err)
 		return
@@ -33,11 +35,13 @@ func AddPosts(ct *gin.Context) {
 
 func GetPost(ct *gin.Context) {
 	id, err1 := strconv.Atoi(ct.Param("post_id"))
+	fmt.Println("SOMETHING")
 	if err1 != nil {
 		ct.Error(err1)
 		return
 	}
 	post, err2 := dbconnect.ReadPost(id)
+	fmt.Println(post)
 	if err2 != nil {
 		ct.Error(err2)
 		return

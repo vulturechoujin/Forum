@@ -1,21 +1,21 @@
 import React,{useEffect, useState} from "react"
 import { RenderPost } from "./Restful_API";
-import type { Post } from "./myType";
-import { useNavigate } from 'react-router-dom'
+import { list_topics, type Post } from "./myType";
+import { useNavigate, useParams } from 'react-router-dom'
 import Typography from "@mui/material/Typography";
 import { Box } from "@mui/material";
 import { IconAvatar } from "./IconButton";
 import { captureException } from "@sentry/browser";
-export function BlogList() {
+import { BlogNotFound } from "./ErrorPage";
+export function BlogList({topic}:{topic:string}) {
   const [posts,setPosts] = useState<Post[]>([]);
   const navigate = useNavigate();
   const [isErr,setisErr] = useState<Boolean>(false);
   const handleList = async()=>{
     try{
-      const response = await RenderPost();
+      const response = await RenderPost(topic);
       const Posts = await response.json();
-      setPosts(Posts);    
-      // console.log(Posts);
+      setPosts(Posts)    
     }      
     catch(err){
       captureException(err);
@@ -27,7 +27,7 @@ export function BlogList() {
   }
   ,[])
   const navigatePost=(id:number)=>{
-    navigate(`./post/${id}`)
+    navigate(`./${id}`)
   }
   return (
     <Box sx={{

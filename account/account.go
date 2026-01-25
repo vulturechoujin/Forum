@@ -54,12 +54,16 @@ func AddUsers(ct *gin.Context) {
 }
 
 func VerifyUsers(ct *gin.Context) {
-	var Credentials myTypes.User
-	if err := ct.BindJSON(&Credentials); err != nil {
+	var LoginCredentials myTypes.LoginCredential
+	if err := ct.BindJSON(&LoginCredentials); err != nil {
 		_ = ct.Error(err)
 		return
 	}
-	fmt.Println(Credentials.Username)
+	fmt.Println(LoginCredentials.Username)
+	Credentials := myTypes.User{
+		Username: LoginCredentials.Username,
+		Password: LoginCredentials.Password,
+	}
 	username, password, err2 := dbconnect.FindUser(Credentials)
 	if err2 != nil {
 		_ = ct.Error(err2)
@@ -74,7 +78,11 @@ func VerifyUsers(ct *gin.Context) {
 			_ = ct.Error(err2)
 			return
 		}
-		ct.SetCookie("token", tokenString, 3600, "/", "https://forum-tngg.onrender.com", true, true)
+		if LoginCredentials.Remember {
+			ct.SetCookie("token", tokenString, 2592000, "/", "https://forum-tngg.onrender.com", true, true)
+		} else {
+			ct.SetCookie("token", tokenString, 1800, "/", "https://forum-tngg.onrender.com", true, true)
+		}
 		ct.JSON(http.StatusAccepted, gin.H{
 			"message": "Login Successfully",
 		})
