@@ -19,6 +19,6 @@ This project is a full-stack forum application with the following stack:
 ---
 
 ## Project Structure
-frontend/ # React frontend (Bun)
-backend/ # Golang backend (Gin)
-database/ # PostgreSQL schema & migrations
+-frontend/    # React frontend using Bun
+-backend/     # Golang backend using Gin framework
+-database/    # PostgreSQL schema & migrations
