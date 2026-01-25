@@ -1,21 +1,24 @@
-# bun-react-template
+# Forum Project
 
-To install dependencies:
+This project is a full-stack forum application with the following stack:
 
-```bash
-bun install
-```
+- **Frontend:** React using Bun
+- **Backend:** Golang with Gin framework
+- **Database:** PostgreSQL
+- **Authentication:** JWT Token
+- **Error Logging:** Sentry
+- **Deployment:** Frontend deployed at [https://frontend.myforum.dev/](https://frontend.myforum.dev)
+---
 
-To start a development server:
+## Features
 
-```bash
-bun dev
-```
+- Fetch and update posts using API
+- User authentication with JWT
+- Error tracking during development using Sentry
 
-To run for production:
+---
 
-```bash
-bun start
-```
-
-This project was created using `bun init` in bun v1.3.4. [Bun](https://bun.com) is a fast all-in-one JavaScript runtime.
+## Project Structure
+frontend/ # React frontend (Bun)
+backend/ # Golang backend (Gin)
+database/ # PostgreSQL schema & migrations
